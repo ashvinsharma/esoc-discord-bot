@@ -1,19 +1,16 @@
 const Discord = require('discord.js');
-const {prefix, token} = require('./config');
+const {token, twitch_channel_id: liveChannel} = require('./config');
 const sleep = require('await-sleep');
 const client = new Discord.Client();
-const eso_server = require('./eso_server.js');
 const Twitch = require('./twitch.js');
-
-const twitchUrl = "https://www.twitch.tv/";
-
-const liveChannelID = '452605197584171012';
+const twitchUrl = 'https://www.twitch.tv/';
+const updateInterval = 30000; // ms and not seconds.
+const GRAY = 0x4f545c;
+const GOLD = 0xffa500;
 
 client.on('ready', () => {
-
-    const channel = client.channels.get(liveChannelID);
+    const channel = client.channels.get(liveChannel);
     channel.bulkDelete(100, false);
-    
     startGettingStreams(client).then(() => {
         console.log('Everything\'s working');
     }).catch(err => console.error('Error: ' + err));
@@ -26,29 +23,25 @@ client.login(token).then(() => {
 async function startGettingStreams(client) {
     while (1) {
         const response = await Twitch.getStream();
-        const channel = client.channels.get(liveChannelID);
+        const channel = client.channels.get(liveChannel);
         let streams;
-
-        //channel.bulkDelete(100, false);
-
         streams = response.streams;
-
         for (let stream of streams) {
             let user = response.users['user_' + stream.user_id];
-
-            //   console.log(JSON.stringify(response.users['user_' + stream.user_id]));
-
+            const url = `${twitchUrl}${user.login}`;
+            const embedColor = (stream.viewer_count >= 13) ? GOLD : GRAY;
             const embed = {
-                'title': `https://www.twitch.tv/${user.login}`,
-                'url': 'https://discordapp.com',
+                'title': `${url}`,
+                'color': `${embedColor}`,
+                'url': `${url}`,
                 'timestamp': `${stream.started_at}`,
                 'image': {
-                    'url': `${(stream.thumbnail_url).replace("{height}", "768").replace("{width}", "1366")}`
+                    'url': `${(stream.thumbnail_url).replace('{height}', '768').replace('{width}', '1366')}`
                 },
                 'author': {
                     'name': `${user.display_name} is streaming `,
-                    'url': 'https://discordapp.com',
-                    'icon_url': `${stream.thumbnail_url}`
+                    'url': `${url}`,
+                    'icon_url': `https://images-ext-1.discordapp.net/external/IZEY6CIxPwbBTk-S6KG6WSMxyY5bUEM-annntXfyqbw/https/cdn.discordapp.com/emojis/287637883022737418.png`
                 },
                 'fields': [
                     {
@@ -63,33 +56,22 @@ async function startGettingStreams(client) {
                     }
                 ]
             };
-            //channel.send('```json\n' + JSON.stringify(key) + '```');
-
-            let chose = await channel.fetchMessages({limit: 100}).then(messages => {
-
+            await channel.fetchMessages({limit: 100}).then(messages => {
                 let testString = `${user.display_name} is streaming`;
                 let edited = false;
                 for (let m of messages) {
-
-                    console.log(m[1].embeds[0]);
-
                     if (m[1].embeds[0].author.name.toString() === testString) {
-                        m[1].edit("", {embed: embed});
+                        m[1].edit('', {embed});
                         edited = true;
                         break;
                     }
                 }
                 if (edited === false) {
-                    channel.send({embed})
+                    channel.send({embed});
                 }
-            }).catch(e => console.log(e.message));
+            }).catch(e => console.error(e.message));
         }
-
-        // let schedule = Twitch._getUser(data.userID);
-        // console.log(JSON.stringify(schedule));
-        console.log('one iteration');
-        await sleep(30000);
-
+        await sleep(updateInterval);
     }
 }
 
