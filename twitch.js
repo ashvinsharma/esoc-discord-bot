@@ -1,12 +1,10 @@
 const request = require('request-promise');
-const sleep = require('await-sleep');
 const fs = require('fs');
 
 const clientID = 'l075cyh5nw7b2savfoc46nleqh2sg6';
 
 const prefixJsonData = 'user_';
 
-const twitchUrl = "https://www.twitch.tv/";
 const apiTwitch = 'https://api.twitch.tv/helix/';
 const apiUsers = 'users?id=';
 const apiStreams = 'streams?game_id=10819';
@@ -31,17 +29,6 @@ const optionsSchedules = {
 
 class Twitch {
 
-    static _getStreams() {
-        let data;
-
-        try {
-            data = request.get(apiTwitch + apiStreams, optionsTwitch);
-        } catch (e) {
-            console.log(e.message)
-        }
-        return data;
-    }
-
     static _getSchedules() {
         let data;
 
@@ -53,31 +40,21 @@ class Twitch {
         return data;
     }
 
-    static async _getUserFromCache(resolve, reject, userID) {
+    static async _getUserFromCache(userID) {
         let user = prefixJsonData + userID;
         let writer;
 
-        fs.readFile('user.json', 'utf8', (err, file) => {
-            if (err) reject(err);
+        let file = fs.readFileSync('user.json', 'utf8');
+        file = JSON.parse(file);
 
-            file = JSON.parse(file);
-
-            if (file[user]) resolve(file[user]);
-            else {
-                writer = new Promise((resolve) => {
-                    this._writeToCache(resolve, userID, user, file)
-                });
-                writer.then(data => {
-                    resolve(data);
-                }).catch(err => {
-                    reject(err)
-                })
-            }
-
-        })
+        if (file[user]) return file[user];
+        else {
+            writer = await this._writeToCache(userID, user, file);
+            return writer;
+        }
     }
 
-    static async _writeToCache(resolve, userID, user, file) {
+    static async _writeToCache(userID, user, file) {
         let data;
         let req;
         let temp;
@@ -92,32 +69,29 @@ class Twitch {
                 file = JSON.stringify(file, null, '  '); //Pretty stringify the object in JSON.
                 fs.writeFileSync('user.json', file); //We write back the object to the file.
                 console.log(JSON.stringify(data) + "wololo");
-                resolve(data);
+                return data;
             }).catch();
         } catch (e) {
             console.log(e.message);
         }
+        return temp;
 
     }
 
-    static async _getUser(userID) {
+    static async _getUserPromise(userID) {
         let userData;
         let cacheUsers;
 
         if (fs.existsSync('user.json')) {
 
-            cacheUsers = new Promise((resolve, reject) => {
-                this._getUserFromCache(resolve, reject, userID)
-            });
+            cacheUsers = await this._getUserFromCache(userID);
             userData = cacheUsers;
         } else {
             try {
                 let user = prefixJsonData + userID;
                 let file = {};
                 let writer;
-                writer = new Promise((resolve) => {
-                    this._writeToCache(resolve, userID, user, file)
-                });
+                writer = await this._writeToCache(userID, user, file);
 
                 userData = writer;
 
@@ -129,38 +103,55 @@ class Twitch {
 
     }
 
-    static async Streams() {
-        let cache;
-
-        let streams;
-        let schedules;
-
-
-        while (1) {
-            let streamsPromise = await this._getStreams().then(function (data) {
-                streams = data.data;
-                console.log(JSON.stringify(streams))
-            });
-            let schedulesPromise = await this._getSchedules().then(function (data) {
-                // console.log(JSON.stringify(data));
-                schedules = data;
-            });
-
-            if (typeof streams != 'undefined') {
-
-                let data = {};
-
-                for (data of streams) {
-                    let userData;
-                    let userPromise = await this._getUser(data.user_id).then((res) => {
-                        userData = res;
-                        console.log(JSON.stringify(userData.display_name))
-                    }).catch(e => console.log(e));
-                }
-
-            }
-            await sleep(updateInterval);
+    static async getUser(userID) {
+        let user;
+        try {
+            user = await this._getUserPromise(userID);
+        } catch (err) {
+            console.log(err.message);
         }
+        return user;
+    }
+
+    static _getStreams() {
+        return new Promise((resolve, reject) => {
+            request(apiTwitch + apiStreams, optionsTwitch, function (err, response, body) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(body.data);
+            });
+        });
+    }
+
+    static async getStream() {
+        let streams;
+        let users = {};
+
+        try {
+            streams = await this._getStreams();
+            for (let stream of streams) {
+                console.log(stream.user_id);
+                users['user_' + stream.user_id] = await this.getUser(stream.user_id);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        return {streams, users};
+    }
+
+
+}
+
+/*
+class Streams{
+
+    constructor(type, stream, schedule, response, lastSeen){
+        this._type = type;
+        this._stream = stream;
+        this._schedule = schedule;
+        this._response = response;
+        this._lastSeen = lastSeen;
     }
 
     updateInfo(data) {
@@ -168,9 +159,10 @@ class Twitch {
 
         this._lastSeen = Date.now();
 
+        let url = this.ge
 
     }
-}
+}*/
 
 
 module.exports = Twitch;
