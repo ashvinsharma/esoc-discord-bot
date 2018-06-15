@@ -79,7 +79,7 @@ class Twitch {
         let streams = res.data
         let users = {}
         for (let stream of streams) {
-            users['user_' + stream.user_id] = await this.getUser(userID)
+            users['user_' + stream.user_id] = await this.getUser(stream.user_id)
         }
         return {streams, users}
     }

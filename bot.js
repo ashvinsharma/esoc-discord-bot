@@ -1,18 +1,19 @@
 const Discord = require('discord.js')
+const eso = require('./eso')
 const {token, twitch_channel_id: liveChannel} = require('./config')
+const {ep_channel_id: epChannel} = require('./config')
 const sleep = require('await-sleep')
 const client = new Discord.Client()
-const Twitch = require('./twitch.js')
+const Twitch = require('./twitch')
 const twitchUrl = 'https://www.twitch.tv/'
 const updateInterval = 60000 // ms and not seconds.
 const GRAY = 0x4f545c
 const GOLD = 0xffa500
 const GOLD_COUNT = 25
 
-client.on('ready', () => {
-    startGettingStreams(client).then(() => {
-        console.log('Everything\'s working')
-    }).catch(err => console.error('Error: ' + err))
+client.on('ready', async () => {
+    startGettingGames(client)
+    startGettingStreams(client)
 })
 
 client.login(token).then(() => {
@@ -28,7 +29,7 @@ client.login(token).then(() => {
  * @return Prints streams on the live-channel
  */
 async function startGettingStreams(client) {
-    let streamsEmbed = new Map()
+    let streamEmbeds = new Map()
     const channel = client.channels.get(liveChannel)
     channel.bulkDelete(100, false)
     while (true) {
@@ -68,14 +69,14 @@ async function startGettingStreams(client) {
                 ]
             }
             // Adds the stream if not in the map
-            if (streamsEmbed.get(user.display_name) === undefined) {
-                await channel.send({embed: embed}).then(m => {
+            if (streamEmbeds.get(user.display_name) === undefined) {
+                await channel.send({embed}).then(m => {
                     console.log(`${user.display_name} stream added`)
                     tempStreamMap.set(user.display_name, m.id)
                 }).catch(e => console.log(e.message))
             } else {
                 // Update the streams if changed
-                await channel.fetchMessage(streamsEmbed.get(user.display_name)).then(m => {
+                await channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
                     tempStreamMap.set(user.display_name, m.id)
                     m.edit('', {embed}).catch(e => console.log(e.message))
                     console.log(`${user.display_name} stream updated`)
@@ -83,7 +84,7 @@ async function startGettingStreams(client) {
             }
         }
         // Deletes the streams if not found in the response
-        for (let streamEmbed of streamsEmbed) {
+        for (let streamEmbed of streamEmbeds) {
             if (streamEmbed !== undefined && tempStreamMap.get(streamEmbed[0]) === undefined) {
                 await channel.fetchMessage(streamEmbed[1]).then(m => {
                     m.delete().catch(e => console.log(e.message))
@@ -91,7 +92,64 @@ async function startGettingStreams(client) {
                 }).catch(e => console.log(e.message))
             }
         }
-        streamsEmbed = tempStreamMap
+        streamEmbeds = tempStreamMap
         await sleep(updateInterval)
+    }
+}
+
+async function startGettingGames(client) {
+    let gameEmbeds = new Map()
+    const channel = client.channels.get(epChannel)
+    channel.bulkDelete(100, false)
+    while (true) {
+        const games = await eso.getLobby()
+        for (let game of games) {
+            let count = 0
+            for (let p of game.players) if (p === null) count++
+            const embed = {
+                'title': `${game.name}`,
+                'url': `${eso.getUserLink(game.players[0])}`,
+                'color': 26511093,
+                'timestamp': '2018-06-15T06:55:32.191Z',
+                'footer': {
+                    'icon_url': 'https://cdn.discordapp.com/embed/avatars/0.png',
+                    'text': 'footer text'
+                },
+                'thumbnail': {
+                    'url': 'https://cdn.discordapp.com/attachments/380115072548208660/457080365471760405/adirondacks.png'
+                },
+                'image': {
+                    'url': ''
+                },
+                'author': {
+                    'name': 'Treaty Patch',
+                    'icon_url': 'https://images-ext-2.discordapp.net/external/T_h-FtvvtBhsY7R4Sc9Aaa_ZPupLZX1I4XWvOnVfSAA/http/eso-community.net/images/aoe3/patch-esoc-icon.png?width=72&height=72'
+                },
+                'fields': [
+                    {
+                        'name': 'Host',
+                        'value': `${game.players[0]}`,
+                        'inline': true
+                    },
+                    {
+                        'name': 'Players',
+                        'value': `${8 - count}/${game.max_players}`,
+                        'inline': true
+                    },
+                    {
+                        'name': 'Map',
+                        'value': `${game.map}`,
+                        'inline': true
+                    },
+                    {
+                        'name': 'Game mode',
+                        'value': 'Treaty 10 min.',
+                        'inline': true
+                    }
+                ]
+            }
+
+        }
+        channel.send({embed})
     }
 }
