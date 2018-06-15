@@ -7,6 +7,7 @@ const twitchUrl = 'https://www.twitch.tv/'
 const updateInterval = 60000 // ms and not seconds.
 const GRAY = 0x4f545c
 const GOLD = 0xffa500
+const GOLD_COUNT = 25
 
 client.on('ready', () => {
     startGettingStreams(client).then(() => {
@@ -39,7 +40,7 @@ async function startGettingStreams(client) {
         for (let stream of streams) {
             user = response.users['user_' + stream.user_id]
             const url = `${twitchUrl}${user.login}`
-            const embedColor = (stream.viewer_count >= 13) ? GOLD : GRAY
+            const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY
             const embed = {
                 'title': `${url}`,
                 'color': `${embedColor}`,
