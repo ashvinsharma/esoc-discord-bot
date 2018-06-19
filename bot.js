@@ -35,7 +35,6 @@ async function startGettingStreams(client) {
     while (true) {
         let tempStreamMap = new Map()
         const response = await Twitch.getStream()
-        const channel = client.channels.get(liveChannel)
         let user
         const streams = response.streams
         for (let stream of streams) {
@@ -70,26 +69,26 @@ async function startGettingStreams(client) {
             }
             // Adds the stream if not in the map
             if (streamEmbeds.get(user.display_name) === undefined) {
-                await channel.send({embed}).then(m => {
+                channel.send({embed}).then(m => {
                     console.log(`${user.display_name} stream added`)
                     tempStreamMap.set(user.display_name, m.id)
-                }).catch(e => console.log(e.message))
+                }).catch(e => console.log(e))
             } else {
                 // Update the streams if changed
-                await channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
+                channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
                     tempStreamMap.set(user.display_name, m.id)
-                    m.edit('', {embed}).catch(e => console.log(e.message))
+                    m.edit('', {embed}).catch(e => console.log(e))
                     console.log(`${user.display_name} stream updated`)
-                }).catch(e => console.log(e.message))
+                }).catch(e => console.error(e))
             }
         }
         // Deletes the streams if not found in the response
         for (let streamEmbed of streamEmbeds) {
             if (streamEmbed !== undefined && tempStreamMap.get(streamEmbed[0]) === undefined) {
-                await channel.fetchMessage(streamEmbed[1]).then(m => {
-                    m.delete().catch(e => console.log(e.message))
+                channel.fetchMessage(streamEmbed[1]).then(m => {
+                    m.delete().catch(e => console.error(e))
                     console.log(`${streamEmbed[0]} stream deleted`)
-                }).catch(e => console.log(e.message))
+                }).catch(e => console.error(e))
             }
         }
         streamEmbeds = tempStreamMap
@@ -102,28 +101,30 @@ async function startGettingGames(client) {
     const channel = client.channels.get(epChannel)
     channel.bulkDelete(100, false)
     while (true) {
+        let newGames = new Map()
         const games = await eso.getLobby()
         for (let game of games) {
             let count = 0
             for (let p of game.players) if (p === null) count++
+            const date = new Date()
             const embed = {
-                'title': `${game.name}`,
-                'url': `${eso.getUserLink(game.players[0])}`,
-                'color': 26511093,
-                'timestamp': '2018-06-15T06:55:32.191Z',
+                'title': game.name,
+                'url': eso.getUserLink(game.players[0], game.patch),
+                'color': eso.getEmbedColor(game.patch),
+                'timestamp': date.toISOString(game.last_pong),
                 'footer': {
                     'icon_url': 'https://cdn.discordapp.com/embed/avatars/0.png',
-                    'text': 'footer text'
+                    'text': 'Created At'
                 },
                 'thumbnail': {
-                    'url': 'https://cdn.discordapp.com/attachments/380115072548208660/457080365471760405/adirondacks.png'
+                    'url': eso.getPatchIcon(game.patch)
                 },
                 'image': {
                     'url': ''
                 },
                 'author': {
-                    'name': 'Treaty Patch',
-                    'icon_url': 'https://images-ext-2.discordapp.net/external/T_h-FtvvtBhsY7R4Sc9Aaa_ZPupLZX1I4XWvOnVfSAA/http/eso-community.net/images/aoe3/patch-esoc-icon.png?width=72&height=72'
+                    'name': eso.getPatch(game.patch),
+                    'icon_url': eso.getPatchIcon(game.patch)
                 },
                 'fields': [
                     {
@@ -148,8 +149,28 @@ async function startGettingGames(client) {
                     }
                 ]
             }
-
+            if (gameEmbeds.get(game.id) === undefined) {
+                channel.send({embed}).then(message => {
+                    console.log(`${game.name} is created`)
+                    newGames.set(game.id, message.id)
+                }).catch(e => console.error("hi " + e))
+            } else {
+                channel.fetchMessage(gameEmbeds.get(game.id)).then(message => {
+                    newGames.set(game.id, message.id)
+                    message.edit('', {embed}).catch(e => console.erroror(e))
+                    console.log(`${game.name} is updated`)
+                }).catch(e => console.error(e))
+            }
         }
-        channel.send({embed})
+        for (let gameEmbed of gameEmbeds) {
+            if (gameEmbed !== undefined && newGames.get(gameEmbed[0]) === undefined) {
+                channel.fetchMessage(streamEmbed[1]).then(message => {
+                    message.delete().catch(e => console.error(e))
+                    console.log(`Game ID: ${gameEmbed[0]} deleted`)
+                }).catch(e => console.error(e))
+            }
+        }
+        gameEmbeds = newGames
+        await sleep(updateInterval)
     }
 }
