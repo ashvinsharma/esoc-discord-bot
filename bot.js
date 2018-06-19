@@ -69,13 +69,13 @@ async function startGettingStreams(client) {
             }
             // Adds the stream if not in the map
             if (streamEmbeds.get(user.display_name) === undefined) {
-                channel.send({embed}).then(m => {
+                await channel.send({embed}).then(m => {
                     console.log(`${user.display_name} stream added`)
                     tempStreamMap.set(user.display_name, m.id)
                 }).catch(e => console.log(e))
             } else {
                 // Update the streams if changed
-                channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
+                await channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
                     tempStreamMap.set(user.display_name, m.id)
                     m.edit('', {embed}).catch(e => console.log(e))
                     console.log(`${user.display_name} stream updated`)
@@ -85,7 +85,7 @@ async function startGettingStreams(client) {
         // Deletes the streams if not found in the response
         for (let streamEmbed of streamEmbeds) {
             if (streamEmbed !== undefined && tempStreamMap.get(streamEmbed[0]) === undefined) {
-                channel.fetchMessage(streamEmbed[1]).then(m => {
+                await channel.fetchMessage(streamEmbed[1]).then(m => {
                     m.delete().catch(e => console.error(e))
                     console.log(`${streamEmbed[0]} stream deleted`)
                 }).catch(e => console.error(e))
@@ -106,15 +106,15 @@ async function startGettingGames(client) {
         for (let game of games) {
             let count = 0
             for (let p of game.players) if (p === null) count++
-            const date = new Date()
+            const date = new Date(game.last_pong)
             const embed = {
                 'title': game.name,
                 'url': eso.getUserLink(game.players[0], game.patch),
                 'color': eso.getEmbedColor(game.patch),
-                'timestamp': date.toISOString(game.last_pong),
+                'timestamp': date.toISOString(),
                 'footer': {
-                    'icon_url': 'https://cdn.discordapp.com/embed/avatars/0.png',
-                    'text': 'Created At'
+                    'icon_url': '',
+                    'text': `Created At`
                 },
                 'thumbnail': {
                     'url': eso.getPatchIcon(game.patch)
@@ -144,33 +144,32 @@ async function startGettingGames(client) {
                     },
                     {
                         'name': 'Game mode',
-                        'value': 'Treaty 10 min.',
+                        'value': eso.getGameMode(game.game_mode, game.treaty_time),
                         'inline': true
                     }
                 ]
             }
             if (gameEmbeds.get(game.id) === undefined) {
-                channel.send({embed}).then(message => {
+                await channel.send({embed}).then(message => {
                     console.log(`${game.name} is created`)
                     newGames.set(game.id, message.id)
-                }).catch(e => console.error("hi " + e))
+                }).catch(e => console.error('hi ' + e))
             } else {
-                channel.fetchMessage(gameEmbeds.get(game.id)).then(message => {
+                await channel.fetchMessage(gameEmbeds.get(game.id)).then(message => {
                     newGames.set(game.id, message.id)
-                    message.edit('', {embed}).catch(e => console.erroror(e))
+                    message.edit('', {embed}).catch(e => console.error(e))
                     console.log(`${game.name} is updated`)
                 }).catch(e => console.error(e))
             }
         }
         for (let gameEmbed of gameEmbeds) {
             if (gameEmbed !== undefined && newGames.get(gameEmbed[0]) === undefined) {
-                channel.fetchMessage(streamEmbed[1]).then(message => {
+                await channel.fetchMessage(streamEmbed[1]).then(message => {
                     message.delete().catch(e => console.error(e))
                     console.log(`Game ID: ${gameEmbed[0]} deleted`)
                 }).catch(e => console.error(e))
             }
         }
         gameEmbeds = newGames
-        await sleep(updateInterval)
     }
 }

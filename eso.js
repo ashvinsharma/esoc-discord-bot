@@ -2,7 +2,7 @@ const request = require('request-promise')
 
 class ESO {
     static async getLobby() {
-        const req = await request('http://eso-community.net/assets/patch/api/lobbies2.json')
+        const req = await request('http://eso-community.net/assets/patch/api/lobbies.json')
         return JSON.parse(req)
     }
 
@@ -37,6 +37,14 @@ class ESO {
         else
             return 0xc32025
 
+    }
+
+    static getGameMode(mode, time) {
+        if (mode === 0) {
+            if (time !== 0) return `Treaty ${time} min.`
+            else return 'Supremacy'
+        }
+        else if (mode === 1) return 'Deathmatch'
     }
 }
 
