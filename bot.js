@@ -12,7 +12,7 @@ const GOLD = 0xffa500
 const GOLD_COUNT = 25
 
 client.on('ready', async () => {
-    // startGettingGames(client)
+    startGettingGames(client)
     startGettingStreams(client)
 })
 
