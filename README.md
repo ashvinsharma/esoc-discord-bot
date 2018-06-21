@@ -7,6 +7,12 @@ config.json
   "prefix": "!",
   "twitch_channel_id": "455043895168860160",
   "ep_channel_id": "457057369445236736",
-  "token": string_value
+  "token": <string>,
+    "db": {
+      "host": <string>,
+      "user": <string>,
+      "password": <string>
+    }
+
 }
 ```
