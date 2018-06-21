@@ -1,9 +1,10 @@
 const request = require('request-promise')
-const mysql = require('mysql')
+const con = require('./db.js')
+const {db} = require('./config.json')
 
 class ESO {
     static async getLobby() {
-        const req = await request('http://eso-community.net/assets/patch/api/lobbies.json')
+        const req = await request('http://eso-community.net/assets/patch/api/lobbies2.json')
         return JSON.parse(req)
     }
 
@@ -48,8 +49,13 @@ class ESO {
         else if (mode === 1) return 'Deathmatch'
     }
 
-    static getMapIcon(map) {
-
+    static async getMapIcon(map) {
+        // const getMap = `SELECT * FROM esoc.maps WHERE DisplayName=\'${map}\'`
+        // let [rows, fields] = await con.execute(getMap)
+        // if (rows.length !== 0 && rows[0].MiniMapUrl !== undefined)
+        //     return `http://eso-community.net${rows[0].MiniMapUrl}`
+        // else
+            return 'https://media.discordapp.net/attachments/380115072548208660/457080365471760405/adirondacks.png?width=270&height=270'
     }
 }
 

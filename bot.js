@@ -117,7 +117,7 @@ async function startGettingGames(client) {
                 //     'text': `Created At`
                 // },
                 'thumbnail': {
-                    'url': eso.getMapIcon(game.map)
+                    'url': await eso.getMapIcon(game.map)
                 },
                 'image': {
                     'url': ''
