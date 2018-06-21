@@ -1,4 +1,5 @@
 const request = require('request-promise')
+const mysql = require('mysql')
 
 class ESO {
     static async getLobby() {
@@ -45,6 +46,10 @@ class ESO {
             else return 'Supremacy'
         }
         else if (mode === 1) return 'Deathmatch'
+    }
+
+    static getMapIcon(map) {
+
     }
 }
 

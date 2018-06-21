@@ -111,13 +111,13 @@ async function startGettingGames(client) {
                 'title': game.name,
                 'url': eso.getUserLink(game.players[0], game.patch),
                 'color': eso.getEmbedColor(game.patch),
-                'timestamp': date.toISOString(),
-                'footer': {
-                    'icon_url': '',
-                    'text': `Created At`
-                },
+                // 'timestamp': date.toISOString(),
+                // 'footer': {
+                //     'icon_url': '',
+                //     'text': `Created At`
+                // },
                 'thumbnail': {
-                    'url': eso.getPatchIcon(game.patch)
+                    'url': eso.getMapIcon(game.map)
                 },
                 'image': {
                     'url': ''
