@@ -139,12 +139,12 @@ async function startGettingGames(client) {
                     },
                     {
                         'name': 'Map',
-                        'value': `${game.map}`,
+                        'value': eso.getMap(game.map),
                         'inline': true
                     },
                     {
                         'name': 'Game mode',
-                        'value': eso.getGameMode(game.game_mode, game.treaty_time),
+                        'value': eso.getGameMode(game.game_mode, game.treaty_time, game.koth),
                         'inline': true
                     }
                 ]

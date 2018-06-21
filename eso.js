@@ -4,7 +4,7 @@ const {db} = require('./config.json')
 
 class ESO {
     static async getLobby() {
-        const req = await request('http://eso-community.net/assets/patch/api/lobbies2.json')
+        const req = await request('http://eso-community.net/assets/patch/api/lobbies.json')
         return JSON.parse(req)
     }
 
@@ -24,6 +24,17 @@ class ESO {
             return 'XP Mod'
     }
 
+    static getMap(map) {
+        switch (map) {
+            case 'fastrandom':
+                return 'Standard Maps'
+            case 'asianrandom':
+                return 'Asian Maps'
+            default:
+                return map
+        }
+    }
+
     static getPatchIcon(patch) {
         if (patch === 1)
             return 'http://eso-community.net/images/aoe3/patch-esoc-icon.png'
@@ -41,9 +52,10 @@ class ESO {
 
     }
 
-    static getGameMode(mode, time) {
+    static getGameMode(mode, time, koth) {
         if (mode === 0) {
             if (time !== 0) return `Treaty ${time} min.`
+            if (koth) return 'King Of the Hill'
             else return 'Supremacy'
         }
         else if (mode === 1) return 'Deathmatch'
@@ -55,7 +67,7 @@ class ESO {
         // if (rows.length !== 0 && rows[0].MiniMapUrl !== undefined)
         //     return `http://eso-community.net${rows[0].MiniMapUrl}`
         // else
-            return 'https://media.discordapp.net/attachments/380115072548208660/457080365471760405/adirondacks.png?width=270&height=270'
+        return 'https://media.discordapp.net/attachments/380115072548208660/457080365471760405/adirondacks.png?width=270&height=270'
     }
 }
 
