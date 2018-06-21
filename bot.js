@@ -12,12 +12,12 @@ const GOLD = 0xffa500
 const GOLD_COUNT = 25
 
 client.on('ready', async () => {
-    startGettingGames(client)
+    // startGettingGames(client)
     startGettingStreams(client)
 })
 
 client.login(token).then(() => {
-    console.log('logged in!')
+    console.debug(new Date() + ' ', 'logged in!')
 })
 
 /**
@@ -56,7 +56,7 @@ async function startGettingStreams(client) {
                 },
                 'fields': [
                     {
-                        'name': `Title`,
+                        'name': `Status`,
                         'value': `${stream.title}`,
                         'inline': true
                     },
@@ -67,28 +67,33 @@ async function startGettingStreams(client) {
                     }
                 ]
             }
+            // Update the streams if changed
+            if (streamEmbeds.get(user.display_name) !== undefined) {
+                await channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
+                    tempStreamMap.set(user.display_name, m.id)
+                    m.edit('', {embed}).catch(e => console.error(new Date() +  ' ', e))
+                    console.debug(new Date() + ' ', `${user.display_name} stream updated`)
+                }).catch(e => {
+                    console.error(new Date() +  ' ', e)
+                    streamEmbeds.delete(user.display_name)
+                    console.info(`${user.display_name} has been deleted from the map.`)
+                })
+            }
             // Adds the stream if not in the map
             if (streamEmbeds.get(user.display_name) === undefined) {
                 await channel.send({embed}).then(m => {
-                    console.log(`${user.display_name} stream added`)
+                    console.debug(new Date() + ' ', `${user.display_name} stream added`)
                     tempStreamMap.set(user.display_name, m.id)
-                }).catch(e => console.log(e))
-            } else {
-                // Update the streams if changed
-                await channel.fetchMessage(streamEmbeds.get(user.display_name)).then(m => {
-                    tempStreamMap.set(user.display_name, m.id)
-                    m.edit('', {embed}).catch(e => console.log(e))
-                    console.log(`${user.display_name} stream updated`)
-                }).catch(e => console.error(e))
+                }).catch(e => console.debug(new Date() + ' ', e))
             }
         }
         // Deletes the streams if not found in the response
         for (let streamEmbed of streamEmbeds) {
             if (streamEmbed !== undefined && tempStreamMap.get(streamEmbed[0]) === undefined) {
                 await channel.fetchMessage(streamEmbed[1]).then(m => {
-                    m.delete().catch(e => console.error(e))
-                    console.log(`${streamEmbed[0]} stream deleted`)
-                }).catch(e => console.error(e))
+                    m.delete().catch(e => console.error(new Date() +  ' ', e))
+                    console.debug(new Date() + ' ', `${streamEmbed[0]} stream deleted`)
+                }).catch(e => console.error(new Date() +  ' ', e))
             }
         }
         streamEmbeds = tempStreamMap
@@ -106,7 +111,6 @@ async function startGettingGames(client) {
         for (let game of games) {
             let count = 0
             for (let p of game.players) if (p === null) count++
-            const date = new Date(game.last_pong)
             const embed = {
                 'title': game.name,
                 'url': eso.getUserLink(game.players[0], game.patch),
@@ -151,23 +155,23 @@ async function startGettingGames(client) {
             }
             if (gameEmbeds.get(game.id) === undefined) {
                 await channel.send({embed}).then(message => {
-                    console.log(`${game.name} is created`)
+                    console.debug(new Date() + ' ', `${game.name} is created`)
                     newGames.set(game.id, message.id)
-                }).catch(e => console.error('hi ' + e))
+                }).catch(e => console.error(new Date() +  ' ', e))
             } else {
                 await channel.fetchMessage(gameEmbeds.get(game.id)).then(message => {
                     newGames.set(game.id, message.id)
-                    message.edit('', {embed}).catch(e => console.error(e))
-                    console.log(`${game.name} is updated`)
-                }).catch(e => console.error(e))
+                    message.edit('', {embed}).catch(e => console.error(new Date() +  ' ', e))
+                    console.debug(new Date() + ' ', `${game.name} is updated`)
+                }).catch(e => console.error(new Date() +  ' ', e))
             }
         }
         for (let gameEmbed of gameEmbeds) {
             if (gameEmbed !== undefined && newGames.get(gameEmbed[0]) === undefined) {
                 await channel.fetchMessage(streamEmbed[1]).then(message => {
-                    message.delete().catch(e => console.error(e))
-                    console.log(`Game ID: ${gameEmbed[0]} deleted`)
-                }).catch(e => console.error(e))
+                    message.delete().catch(e => console.error(new Date() +  ' ', e))
+                    console.debug(new Date() + ' ', `Game ID: ${gameEmbed[0]} deleted`)
+                }).catch(e => console.error(new Date() +  ' ', e))
             }
         }
         gameEmbeds = newGames

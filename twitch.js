@@ -47,7 +47,7 @@ class Twitch {
             fs.writeFileSync('user.json', file) //We write back the object to the file.
             return data
         } catch (e) {
-            console.error(e.message)
+            console.error(new Date() + ' ', e) 
         }
         return temp
 
@@ -67,7 +67,7 @@ class Twitch {
                 writer = await this.writeToCache(userID, user, file)
                 userData = writer
             } catch (e) {
-                console.error(e)
+                console.error(new Date() + ' ', e) 
             }
         }
         return userData
