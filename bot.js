@@ -4,15 +4,10 @@ const sleep = require('await-sleep');
 const client = new Discord.Client();
 const { token, twitch_channel_id: liveChannel } = require('./config');
 const { ep_channel_id: epChannel } = require('./config');
-const eso = require('./eso');
+const ESO = require('./eso');
 const Twitch = require('./twitch');
 
-const twitchUrl = 'https://www.twitch.tv/';
 const updateInterval = 60000; // ms and not seconds.
-const GRAY = 0x4f545c;
-const GOLD = 0xffa500;
-const GOLD_COUNT = 25;
-
 async function deleteRedundantMessages(deleteJobs) {
   if (deleteJobs.length >= 1) {
     await Promise.all(deleteJobs);
@@ -35,39 +30,10 @@ async function startGettingStreams(client) {
   while (true) {
     const tempStreamMap = new Map();
     const response = await Twitch.getStream();
-    let user;
     const streams = response.streams;
-    streams.map(async (stream) => {
-      user = response.users[`user_${stream.user_id}`];
-      const url = `${twitchUrl}${user.login}`;
-      const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY;
-      const embed = {
-        title: `${url}`,
-        color: `${embedColor}`,
-        url: `${url}`,
-        timestamp: `${stream.started_at}`,
-        image: {
-          url: `${(stream.thumbnail_url).replace('{height}', '768')
-            .replace('{width}', '1366')}`,
-        },
-        author: {
-          name: `${user.display_name} is streaming `,
-          url: `${url}`,
-          icon_url: 'https://images-ext-1.discordapp.net/external/IZEY6CIxPwbBTk-S6KG6WSMxyY5bUEM-annntXfyqbw/https/cdn.discordapp.com/emojis/287637883022737418.png',
-        },
-        fields: [
-          {
-            name: 'Status',
-            value: `${stream.title}`,
-            inline: true,
-          },
-          {
-            name: 'Viewers',
-            value: `${stream.viewer_count}`,
-            inline: true,
-          },
-        ],
-      };
+    await Promise.all(streams.map(async (stream) => {
+      const user = response.users[`user_${stream.user_id}`];
+      const embed = await Twitch.createEmbed(response, stream);
       // Update the streams if changed
       if (streamEmbeds.get(user.display_name) !== undefined) {
         const m = await channel.fetchMessage(streamEmbeds.get(user.display_name));
@@ -81,7 +47,8 @@ async function startGettingStreams(client) {
         console.debug(`${new Date()} `, `${user.display_name} stream added`);
         tempStreamMap.set(user.display_name, m.id);
       }
-    });
+    }))
+      .catch(e => console.error(`${new Date()} `, e));
     // Deletes the streams if not found in the response
     const deleteStreams = [];
     streamEmbeds.forEach((val, key, map) => {
@@ -105,9 +72,9 @@ async function startGettingGames(client) {
   // noinspection InfiniteLoopJS
   while (true) {
     const newGames = new Map();
-    const games = await eso.getLobbies();
+    const games = await ESO.getLobbies();
     await Promise.all(games.map(async (game) => {
-      const embed = await eso.createEmbed(game);
+      const embed = await ESO.createEmbed(game);
       // Update
       if ((gameEmbeds.get(game.id) !== undefined)) {
         const message = await channel.fetchMessage(gameEmbeds.get(game.id));
@@ -139,7 +106,7 @@ async function startGettingGames(client) {
 
 client.on('ready', async () => {
   startGettingGames(client);
-  // startGettingStreams(client);
+  startGettingStreams(client);
 });
 
 client.login(token)
