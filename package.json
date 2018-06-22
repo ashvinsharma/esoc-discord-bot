@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Bot in ESOC discord which parses twitch streams, ESOC lobbies and interacts with users",
   "main": "./bot",
+  "scripts": {
+    "start": "node ."
+  },
   "dependencies": {
     "await-sleep": "0.0.1",
     "bufferutil": "^3.0.3",
