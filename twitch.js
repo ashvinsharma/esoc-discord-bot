@@ -82,14 +82,15 @@ class Twitch {
   static async createEmbed(response, stream, user) {
     const url = `${twitchUrl}${user.login}`;
     const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY;
+    const image = `${(stream.thumbnail_url).replace('{height}', '768')
+      .replace('{width}', '1366')}?1529701067.0`;
     return {
       title: `${url}`,
       color: `${embedColor}`,
       url: `${url}`,
       timestamp: `${stream.started_at}`,
       image: {
-        url: `${(stream.thumbnail_url).replace('{height}', '768')
-          .replace('{width}', '1366')}`,
+        url: image,
       },
       author: {
         name: `${user.display_name} is streaming `,
