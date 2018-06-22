@@ -189,6 +189,7 @@ async function startGettingGames(client) {
       }
     });
     gameEmbeds = newGames;
+    await sleep(updateInterval);
   }
 }
 
