@@ -75,6 +75,56 @@ class ESO {
     // else
     return 'https://media.discordapp.net/attachments/380115072548208660/457080365471760405/adirondacks.png?width=270&height=270';
   }
+
+  static async createEmbed(game) {
+    let count = 0;
+    game.players.map((p) => {
+      if (p === null) count += 1;
+    });
+
+    return {
+      title: game.name,
+      url: this.getUserLink(game.players[0], game.patch),
+      color: this.getEmbedColor(game.patch),
+      // 'timestamp': date.toISOString(),
+      // 'footer': {
+      //     'icon_url': '',
+      //     'text': `Created At`
+      // },
+      thumbnail: {
+        url: await this.getMapIcon(game.map),
+      },
+      image: {
+        url: '',
+      },
+      author: {
+        name: this.getPatch(game.patch),
+        icon_url: await this.getPatchIcon(game.patch),
+      },
+      fields: [
+        {
+          name: 'Host',
+          value: `${game.players[0]}`,
+          inline: true,
+        },
+        {
+          name: 'Players',
+          value: `${8 - count}/${game.max_players}`,
+          inline: true,
+        },
+        {
+          name: 'Map',
+          value: await this.getMap(game.map),
+          inline: true,
+        },
+        {
+          name: 'Game mode',
+          value: this.getGameMode(game.game_mode, game.treaty_time, game.koth),
+          inline: true,
+        },
+      ],
+    };
+  }
 }
 
 module.exports = ESO;
