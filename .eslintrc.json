@@ -1,0 +1,27 @@
+{
+  "rules": {
+    "no-console": 0,
+    "no-unused-vars": 1,
+    "no-await-in-loop": [
+      "off",
+      "always"
+    ],
+    "no-shadow": [
+      "off",
+      "always"
+    ],
+    "no-loop-func": [
+      "off",
+      "always"
+    ],
+    "prefer-destructuring": "off",
+    "no-constant-condition": "off",
+    "array-callback-return": "off",
+    "linebreak-style": 0
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": "airbnb-base"
+}
