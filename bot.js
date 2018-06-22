@@ -1,120 +1,203 @@
 const Discord = require('discord.js');
-const {token, twitch_channel_id: liveChannel} = require('./config');
 const sleep = require('await-sleep');
+
 const client = new Discord.Client();
-const Twitch = require('./twitch.js');
+const { token, twitch_channel_id: liveChannel } = require('./config');
+const { ep_channel_id: epChannel } = require('./config');
+const eso = require('./eso');
+const Twitch = require('./twitch');
+
 const twitchUrl = 'https://www.twitch.tv/';
 const updateInterval = 60000; // ms and not seconds.
 const GRAY = 0x4f545c;
 const GOLD = 0xffa500;
+const GOLD_COUNT = 25;
 
-client.on('ready', () => {
-    const channel = client.channels.get(liveChannel);
-    channel.bulkDelete(100, false);
-    startGettingStreams(client).then(() => {
-        console.log('Everything\'s working');
-    }).catch(err => console.error('Error: ' + err));
-});
-
-client.login(token).then(() => {
-    console.log('logged in!');
-});
-
+/**
+ *  Gets data from Twitch helix API and posts in the channel.
+ *  All the streams are stored in map ({streamer_name: message_id}).
+ *  Uses map to create/update/delete embed messages in the channel.
+ *
+ * @param client
+ * @return Prints streams on the live-channel
+ */
 async function startGettingStreams(client) {
-    let streamsEmbed = new Map();
-
-    while (1) {
-        let tempStreamMap = new Map();
-        const response = await Twitch.getStream();
-
-        const channel = client.channels.get(liveChannel);
-
-        let streams;
-        let user;
-
-        streams = response.streams;
-
-        for (let stream of streams) {
-            user = response.users['user_' + stream.user_id];
-
-            const url = `${twitchUrl}${user.login}`;
-            const embedColor = (stream.viewer_count >= 13) ? GOLD : GRAY;
-
-            const embed = {
-                'title': `${url}`,
-                'color': `${embedColor}`,
-                'url': `${url}`,
-                'timestamp': `${stream.started_at}`,
-                'image': {
-                    'url': `${(stream.thumbnail_url).replace('{height}', '768').replace('{width}', '1366')}`
-                },
-                'author': {
-                    'name': `${user.display_name} is streaming `,
-                    'url': `${url}`,
-                    'icon_url': `https://images-ext-1.discordapp.net/external/IZEY6CIxPwbBTk-S6KG6WSMxyY5bUEM-annntXfyqbw/https/cdn.discordapp.com/emojis/287637883022737418.png`
-                },
-                'fields': [
-                    {
-                        'name': `Title`,
-                        'value': `${stream.title}`,
-                        'inline': true
-                    },
-                    {
-                        'name': 'Viewers',
-                        'value': `${stream.viewer_count}`,
-                        'inline': true
-                    }
-                ]
-            };
-
-            if (streamsEmbed.get(user.display_name) === undefined) {
-                let foo = await channel.send({embed: embed}).then(m => {
-                    console.log(`${user.display_name} stream added`);
-                    tempStreamMap.set(user.display_name, m.id);
-                }).catch(e => console.log(e.message));
-            }
-            else {
-                let foo = await channel.fetchMessage(streamsEmbed.get(user.display_name))
-                    .then(m => {
-                        tempStreamMap.set(user.display_name, m.id);
-                        m.edit("", {embed})
-                            .catch(e => console.log(e.message));
-                        console.log(`${user.display_name} stream updated`);
-                    })
-                    .catch(e => console.log(e.message));
-            }
-
-            /* await channel.fetchMessages({limit: 100}).then(messages => {
-
-                 let testString = `${user.display_name} is streaming`;
-                 let edited = false;
-                 for (let m of messages) {
-                     if (m[1].embeds[0].author.name.toString() === testString) {
-                         m[1].edit('', {embed}).catch(e => console.log(e.message));
-                         edited = true;
-                         break;
-                     }
-                 }
-                 if (edited === false) {
-                 }
-             }).catch(e => console.error(e.message));*/
-        }
-        for (let streamEmbed of streamsEmbed) {
-            if (streamEmbed !== undefined && tempStreamMap.get(streamEmbed[0]) === undefined) {
-                let foo = await channel.fetchMessage(streamEmbed[1]).then(m => {
-                    m.delete().catch(e => console.log(e.message));
-                    console.log(`${streamEmbed[0]} stream deleted`);
-                })
-                    .catch(e => console.log(e.message));
-            }
-        }
-        streamsEmbed = tempStreamMap;
-        await sleep(updateInterval);
-    }
+  let streamEmbeds = new Map();
+  const channel = client.channels.get(liveChannel);
+  channel.bulkDelete(100, false);
+  // noinspection InfiniteLoopJS
+  while (true) {
+    const tempStreamMap = new Map();
+    const response = await Twitch.getStream();
+    let user;
+    const streams = response.streams;
+    streams.map(async (stream) => {
+      user = response.users[`user_${stream.user_id}`];
+      const url = `${twitchUrl}${user.login}`;
+      const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY;
+      const embed = {
+        title: `${url}`,
+        color: `${embedColor}`,
+        url: `${url}`,
+        timestamp: `${stream.started_at}`,
+        image: {
+          url: `${(stream.thumbnail_url).replace('{height}', '768')
+            .replace('{width}', '1366')}`,
+        },
+        author: {
+          name: `${user.display_name} is streaming `,
+          url: `${url}`,
+          icon_url: 'https://images-ext-1.discordapp.net/external/IZEY6CIxPwbBTk-S6KG6WSMxyY5bUEM-annntXfyqbw/https/cdn.discordapp.com/emojis/287637883022737418.png',
+        },
+        fields: [
+          {
+            name: 'Status',
+            value: `${stream.title}`,
+            inline: true,
+          },
+          {
+            name: 'Viewers',
+            value: `${stream.viewer_count}`,
+            inline: true,
+          },
+        ],
+      };
+      // Update the streams if changed
+      if (streamEmbeds.get(user.display_name) !== undefined) {
+        await channel.fetchMessage(streamEmbeds.get(user.display_name))
+          .then((m) => {
+            tempStreamMap.set(user.display_name, m.id);
+            m.edit('', { embed })
+              .catch(e => console.error(`${new Date()} `, e));
+            console.debug(`${new Date()} `, `${user.display_name} stream updated`);
+          })
+          .catch((e) => {
+            console.error(`${new Date()} `, e);
+            streamEmbeds.delete(user.display_name);
+            console.info(`${user.display_name} has been deleted from the map.`);
+          });
+      }
+      // Adds the stream if not in the map
+      if (streamEmbeds.get(user.display_name) === undefined) {
+        await channel.send({ embed })
+          .then((m) => {
+            console.debug(`${new Date()} `, `${user.display_name} stream added`);
+            tempStreamMap.set(user.display_name, m.id);
+          })
+          .catch(e => console.debug(`${new Date()} `, e));
+      }
+    });
+    // Deletes the streams if not found in the response
+    streamEmbeds.map(async (streamEmbed) => {
+      if (streamEmbed !== undefined && tempStreamMap.get(streamEmbed[0]) === undefined) {
+        await channel.fetchMessage(streamEmbed[1])
+          .then((m) => {
+            m.delete()
+              .catch(e => console.error(`${new Date()} `, e));
+            console.debug(`${new Date()} `, `${streamEmbed[0]} stream deleted`);
+          })
+          .catch(e => console.error(`${new Date()} `, e));
+      }
+    });
+    streamEmbeds = tempStreamMap;
+    await sleep(updateInterval);
+  }
 }
 
+async function startGettingGames(client) {
+  let gameEmbeds = new Map();
+  const channel = client.channels.get(epChannel);
+  channel.bulkDelete(100, false);
+  // noinspection InfiniteLoopJS
+  while (true) {
+    const newGames = new Map();
+    const games = await eso.getLobbies();
+    games.map(async (game) => {
+      let count = 0;
+      game.players.map((p) => {
+        if (p === null) count += 1;
+      });
+      const embed = {
+        title: game.name,
+        url: eso.getUserLink(game.players[0], game.patch),
+        color: eso.getEmbedColor(game.patch),
+        // 'timestamp': date.toISOString(),
+        // 'footer': {
+        //     'icon_url': '',
+        //     'text': `Created At`
+        // },
+        thumbnail: {
+          url: await eso.getMapIcon(game.map),
+        },
+        image: {
+          url: '',
+        },
+        author: {
+          name: eso.getPatch(game.patch),
+          icon_url: eso.getPatchIcon(game.patch),
+        },
+        fields: [
+          {
+            name: 'Host',
+            value: `${game.players[0]}`,
+            inline: true,
+          },
+          {
+            name: 'Players',
+            value: `${8 - count}/${game.max_players}`,
+            inline: true,
+          },
+          {
+            name: 'Map',
+            value: eso.getMap(game.map),
+            inline: true,
+          },
+          {
+            name: 'Game mode',
+            value: eso.getGameMode(game.game_mode, game.treaty_time, game.koth),
+            inline: true,
+          },
+        ],
+      };
+      if (gameEmbeds.get(game.id) === undefined) {
+        await channel.send({ embed })
+          .then((message) => {
+            console.debug(`${new Date()} `, `${game.name} is created`);
+            newGames.set(game.id, message.id);
+          })
+          .catch(e => console.error(`${new Date()} `, e));
+      } else {
+        await channel.fetchMessage(gameEmbeds.get(game.id))
+          .then((message) => {
+            newGames.set(game.id, message.id);
+            message.edit('', { embed })
+              .catch(e => console.error(`${new Date()} `, e));
+            console.debug(`${new Date()} `, `${game.name} is updated`);
+          })
+          .catch(e => console.error(`${new Date()} `, e));
+      }
+    });
+    gameEmbeds.map(async (gameEmbed) => {
+      if (gameEmbed !== undefined && newGames.get(gameEmbed[0]) === undefined) {
+        await channel.fetchMessage(gameEmbed[1])
+          .then((message) => {
+            message.delete()
+              .catch(e => console.error(`${new Date()} `, e));
+            console.debug(`${new Date()} `, `Game ID: ${gameEmbed[0]} deleted`);
+          })
+          .catch(e => console.error(`${new Date()} `, e));
+      }
+    });
+    gameEmbeds = newGames;
+  }
+}
 
+client.on('ready', async () => {
+  startGettingGames(client);
+  startGettingStreams(client);
+});
 
-
-
-
+client.login(token)
+  .then(() => {
+    console.debug(`${new Date()} `, 'logged in!');
+  });
