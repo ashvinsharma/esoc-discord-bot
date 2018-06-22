@@ -27,15 +27,30 @@ class ESO {
     return '';
   }
 
-  static getMap(map) {
+  static isPatch(patch) {
+    [1, 2, 3].some(element => element === patch);
+  }
+
+  static getMap(map, patch) {
     switch (map) {
+      case 'Largerandommaps':
+        if (this.isPatch(patch)) return 'Classic Maps';
+        return 'Large Maps';
+      case 'asianrandom':
+        if (this.isPatch(patch)) return 'ESOC Maps';
+        return 'Asian Maps';
+      case 'featured':
+        if (this.isPatch(patch)) return 'KnB Maps';
+        break;
       case 'fastrandom':
         return 'Standard Maps';
-      case 'asianrandom':
-        return 'Asian Maps';
+      case 'randommaps':
+        if (this.isPatch(patch)) return 'Team Maps';
+        return 'All Maps';
       default:
         return map;
     }
+    return null;
   }
 
   static getPatchIcon(patch) {
@@ -55,15 +70,17 @@ class ESO {
     return 0xc32025;
   }
 
-  static getGameMode(mode, time, koth) {
-    if (mode === 0) {
-      if (time !== 0) return `Treaty ${time} min.`;
-      if (koth) {
-        return 'King Of the Hill';
+  static getGameMode(game) {
+    if (game.game_mode === 0) {
+      if (game.treaty_time !== 0) {
+        let mode = `Treaty ${game.treaty_time} min.`;
+        if (game.no_blockade) mode += ' No blockade';
+        return mode;
       }
+      if (game.koth) return 'King Of the Hill';
       return 'Supremacy';
     }
-    if (mode === 1) return 'Deathmatch';
+    if (game.game_mode === 1) return 'Deathmatch';
     return 'Not-found';
   }
 
@@ -114,12 +131,12 @@ class ESO {
         },
         {
           name: 'Map',
-          value: await this.getMap(game.map),
+          value: await this.getMap(game.map, game.patch),
           inline: true,
         },
         {
           name: 'Game mode',
-          value: this.getGameMode(game.game_mode, game.treaty_time, game.koth),
+          value: this.getGameMode(game),
           inline: true,
         },
       ],

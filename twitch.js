@@ -79,8 +79,7 @@ class Twitch {
     };
   }
 
-  static async createEmbed(response, stream) {
-    const user = response.users[`user_${stream.user_id}`];
+  static async createEmbed(response, stream, user) {
     const url = `${twitchUrl}${user.login}`;
     const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY;
     return {
