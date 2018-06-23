@@ -1,9 +1,9 @@
 const request = require('request-promise');
-const con = require('./db.js');
+const { maps } = require('./game_details');
 
 class ESO {
   static async getLobbies() {
-    const req = await request('http://eso-community.net/assets/patch/api/lobbies.json');
+    const req = await request('http://eso-community.net/assets/patch/api/lobbies2.json');
     return JSON.parse(req);
   }
 
@@ -85,12 +85,15 @@ class ESO {
   }
 
   static async getMapIcon(map) {
-    // const getMap = `SELECT * FROM esoc.maps WHERE DisplayName=\'${map}\'`
-    // let [rows, fields] = await con.execute(getMap)
-    // if (rows.length !== 0 && rows[0].MiniMapUrl !== undefined)
-    //     return `http://eso-community.net${rows[0].MiniMapUrl}`
-    // else
-    return 'https://media.discordapp.net/attachments/380115072548208660/457080365471760405/adirondacks.png?width=270&height=270';
+    const mapName = map.trim();
+    if (maps[mapName] === undefined) console.error(map);
+    let url = maps[mapName].MiniMapUrl;
+    if (url[0] !== '/') url = `/${url}`;
+    const miniMap = `http://eso-community.net${url}`;
+    if (miniMap !== undefined) {
+      return miniMap;
+    }
+    return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
   }
 
   static async createEmbed(game) {
