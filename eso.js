@@ -3,7 +3,7 @@ const { maps } = require('./game_details');
 
 class ESO {
   static async getLobbies() {
-    const req = await request('http://eso-community.net/assets/patch/api/lobbies2.json');
+    const req = await request('http://eso-community.net/assets/patch/api/lobbies.json');
     return JSON.parse(req);
   }
 
@@ -28,7 +28,7 @@ class ESO {
   }
 
   static isPatch(patch) {
-    [1, 2, 3].some(element => element === patch);
+    return [1, 2, 3].some(element => element === patch);
   }
 
   static getPatchIcon(patch) {
