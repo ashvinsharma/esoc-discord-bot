@@ -1,5 +1,4 @@
 const request = require('request-promise');
-const con = require('./db.js');
 
 class ESO {
   static async getLobbies() {
@@ -28,29 +27,7 @@ class ESO {
   }
 
   static isPatch(patch) {
-    [1, 2, 3].some(element => element === patch);
-  }
-
-  static getMap(map, patch) {
-    switch (map) {
-      case 'Largerandommaps':
-        if (this.isPatch(patch)) return 'Classic Maps';
-        return 'Large Maps';
-      case 'asianrandom':
-        if (this.isPatch(patch)) return 'ESOC Maps';
-        return 'Asian Maps';
-      case 'featured':
-        if (this.isPatch(patch)) return 'KnB Maps';
-        break;
-      case 'fastrandom':
-        return 'Standard Maps';
-      case 'randommaps':
-        if (this.isPatch(patch)) return 'Team Maps';
-        return 'All Maps';
-      default:
-        return map;
-    }
-    return null;
+    return [1, 2, 3].some(element => element === patch);
   }
 
   static getPatchIcon(patch) {
@@ -84,21 +61,49 @@ class ESO {
     return 'Not-found';
   }
 
-  static async getMapIcon(map) {
-    // const getMap = `SELECT * FROM esoc.maps WHERE DisplayName=\'${map}\'`
-    // let [rows, fields] = await con.execute(getMap)
-    // if (rows.length !== 0 && rows[0].MiniMapUrl !== undefined)
-    //     return `http://eso-community.net${rows[0].MiniMapUrl}`
-    // else
-    return 'https://media.discordapp.net/attachments/380115072548208660/457080365471760405/adirondacks.png?width=270&height=270';
+  static getMap(map, patch) {
+    switch (map) {
+      case 'Largerandommaps':
+        if (this.isPatch(patch)) return 'Classic Maps';
+        return 'Large Maps';
+      case 'asianrandom':
+        if (this.isPatch(patch)) return 'ESOC Maps';
+        return 'Asian Maps';
+      case 'featured':
+        if (this.isPatch(patch)) return 'KnB Maps';
+        break;
+      case 'fastrandom':
+        return 'Standard Maps';
+      case 'randommaps':
+        if (this.isPatch(patch)) return 'Team Maps';
+        return 'All Maps';
+      default:
+        return map;
+    }
+    return null;
   }
 
-  static async createEmbed(game) {
+  static async getMapIcon(map, maps) {
+    const mapName = map.trim();
+    const mapObject = maps.find(map => map.DisplayName.toLowerCase()
+      .includes(mapName.toLowerCase()) || mapName.toLowerCase()
+      .includes(map.DisplayName.toLowerCase()));
+    if (mapObject === undefined) {
+      console.log(map);
+      return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+    }
+    let url = mapObject.MiniMapUrl;
+    if (url[0] !== '/') url = `/${url}`;
+    url = `http://eso-community.net${url}`;
+    return url;
+  }
+
+  static async createEmbed(game, maps) {
     let count = 0;
     game.players.map((p) => {
       if (p === null) count += 1;
     });
-
+    const map = this.getMap(game.map, game.patch);
     return {
       title: game.name,
       url: this.getUserLink(game.players[0], game.patch),
@@ -109,7 +114,7 @@ class ESO {
       //     'text': `Created At`
       // },
       thumbnail: {
-        url: await this.getMapIcon(game.map),
+        url: await this.getMapIcon(map, maps),
       },
       image: {
         url: '',
@@ -131,7 +136,7 @@ class ESO {
         },
         {
           name: 'Map',
-          value: await this.getMap(game.map, game.patch),
+          value: map,
           inline: true,
         },
         {

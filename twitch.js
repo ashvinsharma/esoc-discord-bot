@@ -79,20 +79,25 @@ class Twitch {
     };
   }
 
+  static getImageURL(stream) {
+    return `${(stream.thumbnail_url).replace('{height}', '768')
+      .replace('{width}', '1366')}?${new Date().getMilliseconds()}`;
+  }
+
   static async createEmbed(response, stream, user) {
     const url = `${twitchUrl}${user.login}`;
     const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY;
+    const image = this.getImageURL(stream);
     return {
       title: `${url}`,
       color: `${embedColor}`,
       url: `${url}`,
       timestamp: `${stream.started_at}`,
       image: {
-        url: `${(stream.thumbnail_url).replace('{height}', '768')
-          .replace('{width}', '1366')}`,
+        url: image,
       },
       author: {
-        name: `${user.display_name} is streaming `,
+        name: `${user.display_name} is now streaming!`,
         url: `${url}`,
         icon_url: 'https://images-ext-1.discordapp.net/external/IZEY6CIxPwbBTk-S6KG6WSMxyY5bUEM-annntXfyqbw/https/cdn.discordapp.com/emojis/287637883022737418.png',
       },
