@@ -1,5 +1,4 @@
 const request = require('request-promise');
-const { maps } = require('./game_details');
 
 class ESO {
   static async getLobbies() {
@@ -84,7 +83,7 @@ class ESO {
     return null;
   }
 
-  static async getMapIcon(map) {
+  static async getMapIcon(map, maps) {
     const mapName = map.trim();
     const mapObject = maps.find(map => map.DisplayName.toLowerCase()
       .includes(mapName.toLowerCase()) || mapName.toLowerCase()
@@ -99,7 +98,7 @@ class ESO {
     return url;
   }
 
-  static async createEmbed(game) {
+  static async createEmbed(game, maps) {
     let count = 0;
     game.players.map((p) => {
       if (p === null) count += 1;
@@ -115,7 +114,7 @@ class ESO {
       //     'text': `Created At`
       // },
       thumbnail: {
-        url: await this.getMapIcon(map),
+        url: await this.getMapIcon(map, maps),
       },
       image: {
         url: '',
