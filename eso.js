@@ -85,21 +85,18 @@ class ESO {
   }
 
   static async getMapIcon(map) {
-    let mapName = map.trim()
-      .toLowerCase();
-    const idx = mapName.indexOf('ui');
-    if (idx !== -1) {
-      mapName = mapName.slice(0, idx).trim();
-    }
-    if (maps[mapName] === undefined) {
-      console.error(map);
+    const mapName = map.trim();
+    const mapObject = maps.find(map => map.DisplayName.toLowerCase()
+      .includes(mapName.toLowerCase()) || mapName.toLowerCase()
+      .includes(map.DisplayName.toLowerCase()));
+    if (mapObject === undefined) {
+      console.log(map);
       return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
     }
-    let url = maps[mapName].MiniMapUrl;
+    let url = mapObject.MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;
-    const miniMap = `http://eso-community.net${url}`;
-    if (miniMap !== undefined) return miniMap;
-    return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+    url = `http://eso-community.net${url}`;
+    return url;
   }
 
   static async createEmbed(game) {
