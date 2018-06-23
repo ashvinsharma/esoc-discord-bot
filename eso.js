@@ -31,28 +31,6 @@ class ESO {
     [1, 2, 3].some(element => element === patch);
   }
 
-  static getMap(map, patch) {
-    switch (map) {
-      case 'Largerandommaps':
-        if (this.isPatch(patch)) return 'Classic Maps';
-        return 'Large Maps';
-      case 'asianrandom':
-        if (this.isPatch(patch)) return 'ESOC Maps';
-        return 'Asian Maps';
-      case 'featured':
-        if (this.isPatch(patch)) return 'KnB Maps';
-        break;
-      case 'fastrandom':
-        return 'Standard Maps';
-      case 'randommaps':
-        if (this.isPatch(patch)) return 'Team Maps';
-        return 'All Maps';
-      default:
-        return map;
-    }
-    return null;
-  }
-
   static getPatchIcon(patch) {
     if (patch === 1) {
       return 'http://eso-community.net/images/aoe3/patch-esoc-icon.png';
@@ -84,15 +62,43 @@ class ESO {
     return 'Not-found';
   }
 
+  static getMap(map, patch) {
+    switch (map) {
+      case 'Largerandommaps':
+        if (this.isPatch(patch)) return 'Classic Maps';
+        return 'Large Maps';
+      case 'asianrandom':
+        if (this.isPatch(patch)) return 'ESOC Maps';
+        return 'Asian Maps';
+      case 'featured':
+        if (this.isPatch(patch)) return 'KnB Maps';
+        break;
+      case 'fastrandom':
+        return 'Standard Maps';
+      case 'randommaps':
+        if (this.isPatch(patch)) return 'Team Maps';
+        return 'All Maps';
+      default:
+        return map;
+    }
+    return null;
+  }
+
   static async getMapIcon(map) {
-    const mapName = map.trim();
-    if (maps[mapName] === undefined) console.error(map);
+    let mapName = map.trim()
+      .toLowerCase();
+    const idx = mapName.indexOf('ui');
+    if (idx !== -1) {
+      mapName = mapName.slice(0, idx).trim();
+    }
+    if (maps[mapName] === undefined) {
+      console.error(map);
+      return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+    }
     let url = maps[mapName].MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;
     const miniMap = `http://eso-community.net${url}`;
-    if (miniMap !== undefined) {
-      return miniMap;
-    }
+    if (miniMap !== undefined) return miniMap;
     return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
   }
 
@@ -101,7 +107,7 @@ class ESO {
     game.players.map((p) => {
       if (p === null) count += 1;
     });
-
+    const map = this.getMap(game.map, game.patch);
     return {
       title: game.name,
       url: this.getUserLink(game.players[0], game.patch),
@@ -112,7 +118,7 @@ class ESO {
       //     'text': `Created At`
       // },
       thumbnail: {
-        url: await this.getMapIcon(game.map),
+        url: await this.getMapIcon(map),
       },
       image: {
         url: '',
@@ -134,7 +140,7 @@ class ESO {
         },
         {
           name: 'Map',
-          value: await this.getMap(game.map, game.patch),
+          value: map,
           inline: true,
         },
         {

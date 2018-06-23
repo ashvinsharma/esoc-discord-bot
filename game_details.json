@@ -1,6 +1,21 @@
 {
   "maps": {
-    "ESOC Manchac": {
+    "team maps": {
+      "MiniMapUrl": "/images/aoe3/maps/team_maps.jpg"
+    },
+    "knb maps": {
+      "MiniMapUrl": "/images/aoe3/maps/kb_maps.png"
+    },
+    "esoc maps": {
+      "MiniMapUrl": "/images/aoe3/maps/esoc_maps.jpg"
+    },
+    "classic maps": {
+      "MiniMapUrl": "/images/aoe3/maps/classic_maps.png"
+    },
+    "standard maps": {
+      "MiniMapUrl": "/images/aoe3/maps/classic_maps.png"
+    },
+    "esoc manchac": {
       "ID": 1,
       "DisplayName": "ESOC Manchac",
       "MiniMapUrl": "/images/aoe3/maps/manchac.png",
@@ -11,7 +26,7 @@
       "Date": "Feb 2016",
       "GameType": "AoE3"
     },
-    "ESOC Adirondacks": {
+    "esoc adirondacks": {
       "ID": 2,
       "DisplayName": "ESOC Adirondacks",
       "MiniMapUrl": "/images/aoe3/maps/adirondacks.png",
@@ -22,7 +37,7 @@
       "Date": "Mar 2016",
       "GameType": "AoE3"
     },
-    "ESOC Arizona": {
+    "esoc arizona": {
       "ID": 3,
       "DisplayName": "ESOC Arizona",
       "MiniMapUrl": "/images/aoe3/maps/arizona.png",
@@ -33,7 +48,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Arkansas": {
+    "esoc arkansas": {
       "ID": 4,
       "DisplayName": "ESOC Arkansas",
       "MiniMapUrl": "/images/aoe3/maps/arkansas.png",
@@ -44,7 +59,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Bonnie Springs": {
+    "esoc bonnie springs": {
       "ID": 5,
       "DisplayName": "ESOC Bonnie Springs",
       "MiniMapUrl": "/images/aoe3/maps/bonnie_springs.png",
@@ -55,7 +70,7 @@
       "Date": "Feb 2016",
       "GameType": "AoE3"
     },
-    "ESOC Baja California": {
+    "esoc baja california": {
       "ID": 6,
       "DisplayName": "ESOC Baja California",
       "MiniMapUrl": "/images/aoe3/maps/baja_california.png",
@@ -66,7 +81,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Bengal": {
+    "esoc bengal": {
       "ID": 7,
       "DisplayName": "ESOC Bengal",
       "MiniMapUrl": "/images/aoe3/maps/bengal.png",
@@ -77,7 +92,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Mendocino": {
+    "esoc mendocino": {
       "ID": 8,
       "DisplayName": "ESOC Mendocino",
       "MiniMapUrl": "/images/aoe3/maps/mendocino.png",
@@ -88,7 +103,7 @@
       "Date": "Feb 2016",
       "GameType": "AoE3"
     },
-    "ESOC Pampas Sierras": {
+    "esoc pampas sierras": {
       "ID": 9,
       "DisplayName": "ESOC Pampas Sierras",
       "MiniMapUrl": "/images/aoe3/maps/pampas_sierras.png",
@@ -99,7 +114,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Tassili": {
+    "esoc tassili": {
       "ID": 10,
       "DisplayName": "ESOC Tassili",
       "MiniMapUrl": "/images/aoe3/maps/tassili.png",
@@ -110,7 +125,7 @@
       "Date": "Feb 2016",
       "GameType": "AoE3"
     },
-    "ESOC Cascade Range": {
+    "esoc cascade range": {
       "ID": 11,
       "DisplayName": "ESOC Cascade Range",
       "MiniMapUrl": "/images/aoe3/maps/cascade_range.png",
@@ -121,7 +136,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Colorado": {
+    "esoc colorado": {
       "ID": 12,
       "DisplayName": "ESOC Colorado",
       "MiniMapUrl": "/images/aoe3/maps/colorado.png",
@@ -132,7 +147,7 @@
       "Date": "Feb 2016",
       "GameType": "AoE3"
     },
-    "ESOC Florida": {
+    "esoc florida": {
       "ID": 13,
       "DisplayName": "ESOC Florida",
       "MiniMapUrl": "/images/aoe3/maps/florida.png",
@@ -143,7 +158,7 @@
       "Date": "Jul 2016",
       "GameType": "AoE3"
     },
-    "ESOC High Plains": {
+    "esoc high plains": {
       "ID": 14,
       "DisplayName": "ESOC High Plains",
       "MiniMapUrl": "/images/aoe3/maps/high_plains.png",
@@ -154,7 +169,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Hudson Bay": {
+    "esoc hudson bay": {
       "ID": 15,
       "DisplayName": "ESOC Hudson Bay",
       "MiniMapUrl": "/images/aoe3/maps/hudson_bay.png",
@@ -165,7 +180,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Indonesia": {
+    "esoc indonesia": {
       "ID": 16,
       "DisplayName": "ESOC Indonesia",
       "MiniMapUrl": "/images/aoe3/maps/indonesia.png",
@@ -176,7 +191,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Kamchatka": {
+    "esoc kamchatka": {
       "ID": 17,
       "DisplayName": "ESOC Kamchatka",
       "MiniMapUrl": "/images/aoe3/maps/kamchatka.png",
@@ -187,7 +202,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Klondike": {
+    "esoc klondike": {
       "ID": 18,
       "DisplayName": "ESOC Klondike",
       "MiniMapUrl": "/images/aoe3/maps/klondike.png",
@@ -198,7 +213,7 @@
       "Date": "Feb 2016",
       "GameType": "AoE3"
     },
-    "ESOC Tibet": {
+    "esoc tibet": {
       "ID": 19,
       "DisplayName": "ESOC Tibet",
       "MiniMapUrl": "/images/aoe3/maps/tibet.png",
@@ -209,7 +224,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Manchuria": {
+    "esoc manchuria": {
       "ID": 20,
       "DisplayName": "ESOC Manchuria",
       "MiniMapUrl": "/images/aoe3/maps/manchuria.png",
@@ -220,7 +235,7 @@
       "Date": "Feb 2015",
       "GameType": "AoE3"
     },
-    "ESOC Gran Chaco": {
+    "esoc gran chaco": {
       "ID": 21,
       "DisplayName": "ESOC Gran Chaco",
       "MiniMapUrl": "/images/aoe3/maps/gran_chaco.png",
@@ -231,7 +246,7 @@
       "Date": "Jan 2017",
       "GameType": "AoE3"
     },
-    "ESOC Herald Island": {
+    "esoc herald island": {
       "ID": 22,
       "DisplayName": "ESOC Herald Island",
       "MiniMapUrl": "/images/aoe3/maps/herald_island.png",
@@ -242,7 +257,7 @@
       "Date": "Jul 2017",
       "GameType": "AoE3"
     },
-    "ESOC Fertile Crescent": {
+    "esoc fertile crescent": {
       "ID": 23,
       "DisplayName": "ESOC Fertile Crescent",
       "MiniMapUrl": "/images/aoe3/maps/fertile_crescent.png",
@@ -253,7 +268,7 @@
       "Date": "Jan 2017",
       "GameType": "AoE3"
     },
-    "ESOC Malaysia": {
+    "esoc malaysia": {
       "ID": 24,
       "DisplayName": "ESOC Malaysia",
       "MiniMapUrl": "/images/aoe3/maps/malaysia.png",
@@ -264,7 +279,7 @@
       "Date": "Jan 2017",
       "GameType": "AoE3"
     },
-    "ESOC Thar Desert": {
+    "esoc thar desert": {
       "ID": 25,
       "DisplayName": "ESOC Thar Desert",
       "MiniMapUrl": "/images/aoe3/maps/thar_desert.png",
@@ -275,7 +290,7 @@
       "Date": "Jul 2016",
       "GameType": "AoE3"
     },
-    "ESOC Jebel Musa": {
+    "esoc jebel musa": {
       "ID": 26,
       "DisplayName": "ESOC Jebel Musa",
       "MiniMapUrl": "/images/aoe3/maps/jebel_musa.png",
@@ -286,7 +301,7 @@
       "Date": "Jan 2017",
       "GameType": "AoE3"
     },
-    "ESOC Iowa": {
+    "esoc iowa": {
       "ID": 28,
       "DisplayName": "ESOC Iowa",
       "MiniMapUrl": "/images/aoe3/maps/iowa.png",
@@ -297,7 +312,7 @@
       "Date": "Mar 2017",
       "GameType": "AoE3"
     },
-    "Amazonia": {
+    "amazonia": {
       "ID": 30,
       "DisplayName": "Amazonia",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -308,7 +323,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Andes": {
+    "andes": {
       "ID": 31,
       "DisplayName": "Andes",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -319,7 +334,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Araucania": {
+    "araucania": {
       "ID": 32,
       "DisplayName": "Araucania",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -330,7 +345,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Cayou": {
+    "cayou": {
       "ID": 33,
       "DisplayName": "Cayou",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -341,7 +356,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Corneo": {
+    "corneo": {
       "ID": 34,
       "DisplayName": "Corneo",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -352,7 +367,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "California": {
+    "california": {
       "ID": 35,
       "DisplayName": "California",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -363,7 +378,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Caribbean": {
+    "caribbean": {
       "ID": 36,
       "DisplayName": "Caribbean",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -374,7 +389,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Carolina": {
+    "carolina": {
       "ID": 37,
       "DisplayName": "Carolina",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -385,7 +400,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Ceylon": {
+    "ceylon": {
       "ID": 38,
       "DisplayName": "Ceylon",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -396,7 +411,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Great lakes": {
+    "great lakes": {
       "ID": 41,
       "DisplayName": "Great lakes",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -407,7 +422,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Great plains": {
+    "great plains": {
       "ID": 42,
       "DisplayName": "Great plains",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -418,7 +433,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Himalayas": {
+    "himalayas": {
       "ID": 43,
       "DisplayName": "Himalayas",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -429,7 +444,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "HimalayasUpper": {
+    "himalayasupper": {
       "ID": 44,
       "DisplayName": "HimalayasUpper",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -440,7 +455,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Hispaniola": {
+    "hispaniola": {
       "ID": 45,
       "DisplayName": "Hispaniola",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -451,7 +466,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Honshu": {
+    "honshu": {
       "ID": 46,
       "DisplayName": "Honshu",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -462,7 +477,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "HonshuRegicide": {
+    "honshuregicide": {
       "ID": 47,
       "DisplayName": "HonshuRegicide",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -473,7 +488,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Indochina": {
+    "indochina": {
       "ID": 48,
       "DisplayName": "Indochina",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -484,7 +499,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Mongolia": {
+    "mongolia": {
       "ID": 49,
       "DisplayName": "Mongolia",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -495,7 +510,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "New England": {
+    "new england": {
       "ID": 50,
       "DisplayName": "New England",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -506,7 +521,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Northwest Territory": {
+    "northwest territory": {
       "ID": 51,
       "DisplayName": "Northwest Territory",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -517,7 +532,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Orinoco": {
+    "orinoco": {
       "ID": 52,
       "DisplayName": "Orinoco",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -528,7 +543,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Ozarks": {
+    "ozarks": {
       "ID": 53,
       "DisplayName": "Ozarks",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -539,7 +554,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Painted Desert": {
+    "painted desert": {
       "ID": 54,
       "DisplayName": "Painted Desert",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -550,7 +565,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Pampas": {
+    "pampas": {
       "ID": 55,
       "DisplayName": "Pampas",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -561,7 +576,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Patagonia": {
+    "patagonia": {
       "ID": 56,
       "DisplayName": "Patagonia",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -572,7 +587,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Plymouth": {
+    "plymouth": {
       "ID": 57,
       "DisplayName": "Plymouth",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -583,7 +598,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Rockies": {
+    "rockies": {
       "ID": 58,
       "DisplayName": "Rockies",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -594,7 +609,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Saguenay": {
+    "saguenay": {
       "ID": 59,
       "DisplayName": "Saguenay",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -605,7 +620,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Siberia": {
+    "siberia": {
       "ID": 60,
       "DisplayName": "Siberia",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -616,7 +631,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "SilkRoad": {
+    "silkroad": {
       "ID": 61,
       "DisplayName": "SilkRoad",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -627,7 +642,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Sonora": {
+    "sonora": {
       "ID": 62,
       "DisplayName": "Sonora",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -638,7 +653,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Texas": {
+    "texas": {
       "ID": 63,
       "DisplayName": "Texas",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -649,7 +664,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Unknown": {
+    "unknown": {
       "ID": 64,
       "DisplayName": "Unknown",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -660,7 +675,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Yellow riverDry": {
+    "yellow riverdry": {
       "ID": 65,
       "DisplayName": "Yellow riverDry",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -671,7 +686,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Yucatan": {
+    "yucatan": {
       "ID": 66,
       "DisplayName": "Yucatan",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -682,7 +697,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Yukon": {
+    "yukon": {
       "ID": 67,
       "DisplayName": "Yukon",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -693,7 +708,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Deccan": {
+    "deccan": {
       "ID": 68,
       "DisplayName": "Deccan",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -704,7 +719,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Equal Footing": {
+    "equal footing": {
       "ID": 69,
       "DisplayName": "Equal Footing",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -715,7 +730,7 @@
       "Date": null,
       "GameType": "AoEO"
     },
-    "Treasure Island": {
+    "treasure island": {
       "ID": 70,
       "DisplayName": "Treasure Island",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -726,7 +741,7 @@
       "Date": null,
       "GameType": "AoEO"
     },
-    "Coastal": {
+    "coastal": {
       "ID": 71,
       "DisplayName": "Coastal",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -737,7 +752,7 @@
       "Date": null,
       "GameType": "AoEO"
     },
-    "Sheltered Pass": {
+    "sheltered pass": {
       "ID": 72,
       "DisplayName": "Sheltered Pass",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -748,7 +763,7 @@
       "Date": null,
       "GameType": "AoEO"
     },
-    "Arabia": {
+    "arabia": {
       "ID": 73,
       "DisplayName": "Arabia",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -759,7 +774,7 @@
       "Date": null,
       "GameType": "AoEO"
     },
-    "ESOC Parallel Rivers": {
+    "esoc parallel rivers": {
       "ID": 74,
       "DisplayName": "ESOC Parallel Rivers",
       "MiniMapUrl": "/images/aoe3/maps/parallel_rivers.png",
@@ -770,7 +785,7 @@
       "Date": "Oct 2017",
       "GameType": "AoE3"
     },
-    "ESOC Wadmalaw": {
+    "esoc wadmalaw": {
       "ID": 75,
       "DisplayName": "ESOC Wadmalaw",
       "MiniMapUrl": "/images/aoe3/maps/wadmalaw.png",
@@ -781,7 +796,7 @@
       "Date": "Oct 2017",
       "GameType": "AoE3"
     },
-    "ESOC Alaska": {
+    "esoc alaska": {
       "ID": 76,
       "DisplayName": "ESOC Alaska",
       "MiniMapUrl": "/images/aoe3/maps/alaska.png",
@@ -792,7 +807,7 @@
       "Date": "Oct 2017",
       "GameType": "AoE3"
     },
-    "ESOC Great Basin": {
+    "esoc great basin": {
       "ID": 77,
       "DisplayName": "ESOC Great Basin",
       "MiniMapUrl": "/images/aoe3/maps/great_basin.png",
@@ -803,7 +818,7 @@
       "Date": "Oct 2017",
       "GameType": "AoE3"
     },
-    "Mountain Crossing": {
+    "mountain crossing": {
       "ID": 78,
       "DisplayName": "Mountain Crossing",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -814,7 +829,7 @@
       "Date": null,
       "GameType": "AoEO"
     },
-    "Acre": {
+    "acre": {
       "ID": 79,
       "DisplayName": "Acre",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -825,7 +840,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Asunción": {
+    "asunción": {
       "ID": 80,
       "DisplayName": "Asunción",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -836,7 +851,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Cave": {
+    "cave": {
       "ID": 81,
       "DisplayName": "Cave",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -847,7 +862,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Congo": {
+    "congo": {
       "ID": 82,
       "DisplayName": "Congo",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -858,7 +873,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Dallol": {
+    "dallol": {
       "ID": 83,
       "DisplayName": "Dallol",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -869,7 +884,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Sahel": {
+    "sahel": {
       "ID": 84,
       "DisplayName": "Sahel",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -880,7 +895,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Tuscany": {
+    "tuscany": {
       "ID": 85,
       "DisplayName": "Tuscany",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -891,7 +906,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "Watering Hole": {
+    "watering hole": {
       "ID": 86,
       "DisplayName": "Watering Hole",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -902,7 +917,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty Cliff": {
+    "blitztreaty cliff": {
       "ID": 97,
       "DisplayName": "BlitzTreaty Cliff",
       "MiniMapUrl": "images/aoe3/maps/blitz_treaty_cliff.png",
@@ -913,7 +928,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty River": {
+    "blitztreaty river": {
       "ID": 98,
       "DisplayName": "BlitzTreaty River",
       "MiniMapUrl": "images/aoe3/maps/blitz_treaty_river.png",
@@ -924,7 +939,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty TradeRoute": {
+    "blitztreaty traderoute": {
       "ID": 99,
       "DisplayName": "BlitzTreaty TradeRoute",
       "MiniMapUrl": "images/aoe3/maps/blitz_treaty_cliff.traderoute.png",
@@ -935,7 +950,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "ESOC Andes": {
+    "esoc andes": {
       "ID": 100,
       "DisplayName": "ESOC Andes",
       "MiniMapUrl": "images/aoe3/maps/andes.png ",
@@ -946,7 +961,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "ESOC Deccan 1v1": {
+    "esoc deccan 1v1": {
       "ID": 101,
       "DisplayName": "ESOC Deccan 1v1",
       "MiniMapUrl": "images/aoe3/maps/deccan_1v1.png",
@@ -957,7 +972,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "ESOC Northern California": {
+    "esoc northern california": {
       "ID": 102,
       "DisplayName": "ESOC Northern California",
       "MiniMapUrl": "images/aoe3/maps/northern_california.png",
@@ -968,7 +983,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "ESOC Orinonco": {
+    "esoc orinonco": {
       "ID": 103,
       "DisplayName": "ESOC Orinonco",
       "MiniMapUrl": "images/aoe3/maps/orinonco.png",
@@ -979,7 +994,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "ESOC Orinonco Incas": {
+    "esoc orinonco incas": {
       "ID": 104,
       "DisplayName": "ESOC Orinonco Incas",
       "MiniMapUrl": "images/aoe3/maps/orinonco_icans.png",
@@ -990,7 +1005,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "ESOC Snowy Great Plains": {
+    "esoc snowy great plains": {
       "ID": 105,
       "DisplayName": "ESOC Snowy Great Plains",
       "MiniMapUrl": "images/aoe3/maps/snowy_great_plains.png",
@@ -1001,7 +1016,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty Andes": {
+    "blitztreaty andes": {
       "ID": 106,
       "DisplayName": "BlitzTreaty Andes",
       "MiniMapUrl": "images/aoe3/maps/andes.png ",
@@ -1012,7 +1027,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty Toluca": {
+    "blitztreaty toluca": {
       "ID": 107,
       "DisplayName": "BlitzTreaty Toluca",
       "MiniMapUrl": "/images/aoe3/maps/unknown.png",
@@ -1023,7 +1038,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty Snowy Great Plains": {
+    "blitztreaty snowy great plains": {
       "ID": 108,
       "DisplayName": "BlitzTreaty Snowy Great Plains",
       "MiniMapUrl": "images/aoe3/maps/snowy_great_plains.png",
@@ -1034,7 +1049,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty Orinonco": {
+    "blitztreaty orinonco": {
       "ID": 109,
       "DisplayName": "BlitzTreaty Orinonco",
       "MiniMapUrl": "images/aoe3/maps/orinonco.png",
@@ -1045,7 +1060,7 @@
       "Date": null,
       "GameType": "AoE3"
     },
-    "BlitzTreaty Northern California": {
+    "blitztreaty northern california": {
       "ID": 110,
       "DisplayName": "BlitzTreaty Northern California",
       "MiniMapUrl": "images/aoe3/maps/northern_california.png",
