@@ -1,6 +1,6 @@
 const request = require('request-promise');
 
-class ESO {
+class EsoActivity {
   static async getLobbies() {
     const req = await request('http://eso-community.net/assets/patch/api/lobbies.json');
     return JSON.parse(req);
@@ -149,4 +149,4 @@ class ESO {
   }
 }
 
-module.exports = ESO;
+module.exports = EsoActivity;

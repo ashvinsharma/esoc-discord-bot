@@ -4,7 +4,7 @@ const {
   twitch_channel_id: liveChannel,
 } = require('./config');
 const { ep_channel_id: epChannel } = require('./config');
-const ESO = require('./eso');
+const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 
 const updateInterval = 60000; // ms and not seconds.
@@ -63,7 +63,7 @@ class Utils {
             });
         }
       });
-      this.deleteRedundantMessages(deleteStreams);
+      this.deleteRedundantMessages(deleteStreams).catch(e => console.log(e.message));
       streamEmbeds = tempStreamMap;
       await sleep(updateInterval);
     }
@@ -122,7 +122,7 @@ class Utils {
         if ((gameEmbeds.get(game.id) !== undefined)) {
           const message = await channel.fetchMessage(gameEmbeds.get(game.id));
           newGames.set(game.id, message.id);
-          message.edit('', { embed });
+          message.edit('', { embed }).catch(e => console.log(e.message));
           console.debug(`${new Date()} `, `${game.name} is updated`);
         }
         // Add
@@ -141,7 +141,7 @@ class Utils {
           deleteGames.push(message.delete());
         }
       });
-      this.deleteRedundantMessages(deleteGames);
+      this.deleteRedundantMessages(deleteGames).catch(e => e.message);
       gameEmbeds = newGames;
       await sleep(updateInterval);
     }
