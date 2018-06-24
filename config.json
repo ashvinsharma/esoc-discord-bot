@@ -1,0 +1,12 @@
+{
+  "prefix_query": "?",
+  "twitch_channel_id": "460187136281411585",
+  "ep_channel_id": "460187200609583105",
+  "general_channel_id": "460187255571480586",
+  "token": "NDU1MDM5MDkzMDM0NzEzMTE4.Df2Lww.HOdqhYlGidJxKXOwNCk0oDIV3r0",
+  "db": {
+    "host": "esoc.czkmnudi4ftr.us-west-2.rds.amazonaws.com",
+    "user": "Ashvin",
+    "password": "Sharma.js"
+  }
+}
