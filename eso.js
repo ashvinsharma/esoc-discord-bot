@@ -41,10 +41,16 @@ class ESO {
   }
 
   static getEmbedColor(patch) {
-    if (patch === 2) {
-      return 0x0378c0;
+    switch (patch) {
+      case 1:
+        return 0xc32025;
+      case 2:
+        return 0x0378c0;
+      case 3:
+        return 0xc27c0e;
+      default:
+        return 0x4f545c;
     }
-    return 0xc32025;
   }
 
   static getGameMode(game) {
