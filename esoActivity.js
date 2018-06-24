@@ -41,10 +41,16 @@ class EsoActivity {
   }
 
   static getEmbedColor(patch) {
-    if (patch === 2) {
-      return 0x0378c0;
+    switch (patch) {
+      case 1:
+        return 0xc32025;
+      case 2:
+        return 0x0378c0;
+      case 3:
+        return 0xc27c0e;
+      default:
+        return 0x4f545c;
     }
-    return 0xc32025;
   }
 
   static getGameMode(game) {
@@ -84,13 +90,14 @@ class EsoActivity {
   }
 
   static async getMapIcon(map, maps) {
-    const mapName = map.trim();
-    const mapObject = maps.find(map => map.DisplayName.toLowerCase()
-      .includes(mapName.toLowerCase()) || mapName.toLowerCase()
-      .includes(map.DisplayName.toLowerCase()));
+    const mapName = map.trim()
+      .toLowerCase();
+    let mapObject = maps[mapName];
     if (mapObject === undefined) {
-      console.log(map);
-      return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+      mapObject = Object.entries(maps)
+        .find(map => map[1].mapName.toLowerCase()
+          .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
+      // return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
     }
     let url = mapObject.MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;

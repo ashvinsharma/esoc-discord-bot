@@ -9,7 +9,7 @@ config.json
   "twitch_channel_id": "460187136281411585",
   "ep_channel_id": "460187200609583105",
   "general_channel_id": "460187255571480586",
-  "token": "",
+  "token": "NDYwMzg3OTg3NjI5Mjc3MTk1.DhEBRg.EiUTwQ3xTUU-mCO1n1RULEoPBt0",
   "db": {
     "host": "",
     "user": "",
