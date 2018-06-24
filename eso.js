@@ -90,13 +90,14 @@ class ESO {
   }
 
   static async getMapIcon(map, maps) {
-    const mapName = map.trim();
-    const mapObject = maps.find(map => map.DisplayName.toLowerCase()
-      .includes(mapName.toLowerCase()) || mapName.toLowerCase()
-      .includes(map.DisplayName.toLowerCase()));
+    const mapName = map.trim()
+      .toLowerCase();
+    let mapObject = maps[mapName];
     if (mapObject === undefined) {
-      console.log(map);
-      return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+      mapObject = Object.entries(maps)
+        .find(map => map[1].mapName.toLowerCase()
+          .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
+      // return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
     }
     let url = mapObject.MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;

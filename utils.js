@@ -1,3 +1,4 @@
+/* eslint-disable */
 const sleep = require('await-sleep');
 const con = require('./db');
 const {
@@ -70,45 +71,7 @@ class Utils {
   }
 
   static async startGettingGames(client) {
-    let maps = [
-      {
-        DisplayName: 'unknown',
-        MiniMapUrl: '/images/aoe3/maps/unknown.png',
-      },
-      {
-        DisplayName: 'large maps',
-        MiniMapUrl: '/images/aoe3/maps/large_maps.png',
-      },
-      {
-        DisplayName: 'asian maps',
-        MiniMapUrl: '/images/aoe3/maps/asian_maps.png',
-      },
-      {
-        DisplayName: 'all maps',
-        MiniMapUrl: '/images/aoe3/maps/all_maps.png',
-      },
-      {
-        DisplayName: 'team maps',
-        MiniMapUrl: '/images/aoe3/maps/team_maps.jpg',
-      },
-      {
-        DisplayName: 'knb maps',
-        MiniMapUrl: '/images/aoe3/maps/kb_maps.png',
-      },
-      {
-        DisplayName: 'esoc maps',
-        MiniMapUrl: '/images/aoe3/maps/esoc_maps.jpg',
-      },
-      {
-        DisplayName: 'classic maps',
-        MiniMapUrl: '/images/aoe3/maps/classic_maps.png',
-      },
-      {
-        DisplayName: 'standard maps',
-        MiniMapUrl: '/images/aoe3/maps/standard_maps.png',
-      },
-    ];
-    maps = await Utils.addMaps(maps);
+    const maps = await Utils.addMaps();
     let gameEmbeds = new Map();
     const channel = client.channels.get(epChannel);
     channel.bulkDelete(100, false);
@@ -172,13 +135,69 @@ class Utils {
     return templates[idx];
   }
 
-  static async addMaps(maps) {
-    const getMap = 'SELECT esoc.maps.ID, esoc.maps.DisplayName, esoc.maps.MiniMapUrl, '
-      + 'phpBB.p_users.username, esoc.maps.TPs, esoc.maps.Natives, esoc.maps.Outlaws, '
-      + 'esoc.maps.Date, esoc.maps.GameType FROM esoc.maps LEFT JOIN phpBB.p_users ON '
-      + 'esoc.maps.Author = phpBB.p_users.user_id';
+  static async addMaps() {
+    let maps = [
+      {
+        map_name: 'unknown',
+        DisplayName: 'unknown',
+        MiniMapUrl: '/images/aoe3/maps/unknown.png',
+      },
+      {
+        map_name: 'large maps',
+        DisplayName: 'large maps',
+        MiniMapUrl: '/images/aoe3/maps/large_maps.png',
+      },
+      {
+        map_name: 'asian maps',
+        DisplayName: 'asian maps',
+        MiniMapUrl: '/images/aoe3/maps/asian_maps.png',
+      },
+      {
+        map_name: 'all maps',
+        DisplayName: 'all maps',
+        MiniMapUrl: '/images/aoe3/maps/all_maps.png',
+      },
+      {
+        map_name: 'team maps',
+        DisplayName: 'team maps',
+        MiniMapUrl: '/images/aoe3/maps/team_maps.jpg',
+      },
+      {
+        map_name: 'knb maps',
+        DisplayName: 'knb maps',
+        MiniMapUrl: '/images/aoe3/maps/kb_maps.png',
+      },
+      {
+        map_name: 'esoc maps',
+        DisplayName: 'esoc maps',
+        MiniMapUrl: '/images/aoe3/maps/esoc_maps.jpg',
+      },
+      {
+        map_name: 'classic maps',
+        DisplayName: 'classic maps',
+        MiniMapUrl: '/images/aoe3/maps/classic_maps.png',
+      },
+      {
+        map_name: 'standard maps',
+        DisplayName: 'standard maps',
+        MiniMapUrl: '/images/aoe3/maps/standard_maps.png',
+      },
+    ];
+    const getMap = 'SELECT a.map_id, a.map_name, m.*, p.username FROM esoc.maps_aliases a '
+      + 'INNER JOIN esoc.maps m ON m.ID = a.map_id '
+      + 'LEFT JOIN phpBB.p_users p ON p.user_id = m.Author';
     const [rows, fields] = await con.execute(getMap);
-    return [...maps, ...rows];
+    maps = [...maps, ...rows];
+    maps = maps.map((map) => {
+      // eslint-disable-next-line camelcase
+      const { map_name, ...others } = map;
+      return { mapName: map_name, ...others };
+    });
+    maps = maps.reduce((obj, item) => {
+      obj[item.mapName.toLowerCase()] = item; // eslint-disable-line no-param-reassign
+      return obj;
+    }, {});
+    return maps;
   }
 }
 
