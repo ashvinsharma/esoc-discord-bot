@@ -5,7 +5,7 @@ const con = mysql.createPool(db);
 
 // Attempt to catch disconnects
 con.on('connection', (connection) => {
-  console.log('DB Connection established');
+  console.debug('DB Connection established');
   connection.on('error', (err) => {
     console.error(new Date(), 'MySQL error', err.code);
   });

@@ -1,21 +1,20 @@
 /* eslint-disable */
 const sleep = require('await-sleep');
 const con = require('./db');
-const {
-  twitch_channel_id: liveChannel,
-} = require('./config');
+const { twitch_channel_id: liveChannel } = require('./config');
 const { ep_channel_id: epChannel } = require('./config');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
-
-const updateInterval = 60000; // ms and not seconds.
+const updateIntervalTwitch = 60000; // ms and not seconds.
+const updateIntervalESOC = 15000;
 
 let lastRandom = null;
 
 class Utils {
   static async deleteRedundantMessages(deleteJobs) {
     if (deleteJobs.length >= 1) {
-      await Promise.all(deleteJobs);
+      await Promise.all(deleteJobs)
+        .catch(e => console.error(`${new Date()} ${e}`));
     }
   }
 
@@ -53,7 +52,7 @@ class Utils {
           tempStreamMap.set(user.display_name, m.id);
         }
       }))
-        .catch(e => console.error(`${new Date()} `, e));
+        .catch(e => console.error(`${new Date()} ${e}`));
       // Deletes the streams if not found in the response
       const deleteStreams = [];
       streamEmbeds.forEach((val, key, map) => {
@@ -64,9 +63,10 @@ class Utils {
             });
         }
       });
-      this.deleteRedundantMessages(deleteStreams).catch(e => console.log(e.message));
+      this.deleteRedundantMessages(deleteStreams)
+        .catch(e => console.error(e.message));
       streamEmbeds = tempStreamMap;
-      await sleep(updateInterval);
+      await sleep(updateIntervalTwitch);
     }
   }
 
@@ -85,7 +85,8 @@ class Utils {
         if ((gameEmbeds.get(game.id) !== undefined)) {
           const message = await channel.fetchMessage(gameEmbeds.get(game.id));
           newGames.set(game.id, message.id);
-          message.edit('', { embed }).catch(e => console.log(e.message));
+          message.edit('', { embed })
+            .catch(e => console.error(e.message));
           console.debug(`${new Date()} `, `${game.name} is updated`);
         }
         // Add
@@ -95,7 +96,7 @@ class Utils {
           newGames.set(game.id, message.id);
         }
       }))
-        .catch(e => console.error(`${new Date()} `, e));
+        .catch(e => console.error(`${new Date()} ${e}`));
       // Remove
       const deleteGames = [];
       gameEmbeds.forEach(async (val, key, map) => {
@@ -104,9 +105,10 @@ class Utils {
           deleteGames.push(message.delete());
         }
       });
-      this.deleteRedundantMessages(deleteGames).catch(e => e.message);
+      this.deleteRedundantMessages(deleteGames)
+        .catch(e => e.message);
       gameEmbeds = newGames;
-      await sleep(updateInterval);
+      await sleep(updateIntervalESOC);
     }
   }
 
