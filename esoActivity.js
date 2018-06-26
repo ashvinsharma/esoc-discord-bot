@@ -101,7 +101,7 @@ class EsoActivity {
       try {
         mapObject = Object.entries(maps)
           .find(map => map[1].mapName.toLowerCase()
-            .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()));
+            .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
       } catch (e) {
         console.error(`${new Date()} ${e}`);
         return `${ESOC}/images/aoe3/maps/unknown.png`;
