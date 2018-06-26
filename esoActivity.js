@@ -100,8 +100,8 @@ class EsoActivity {
     if (mapObject === undefined) {
       try {
         mapObject = Object.entries(maps)
-          .find(map => map[1].mapName.toLowerCase().includes(mapName)
-        || mapName.includes(map[1].mapName.toLowerCase()));
+          .find(map => map[1].mapName.toLowerCase()
+            .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()));
       } catch (e) {
         console.error(`${new Date()} ${e}`);
         return `${ESOC}/images/aoe3/maps/unknown.png`;
