@@ -1,4 +1,5 @@
 const request = require('request-promise');
+const os = require('os');
 
 const ESOC = 'http://eso-community.net';
 
@@ -98,6 +99,11 @@ class EsoActivity {
       .toLowerCase();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
+      fs.writeFile('maps_name.txt', mapName + os.EOL, {'flag':'a'}, function (err) {
+        if (err) {
+          console.error(`${new Date()} ${err}`);
+        }
+      });
       try {
         mapObject = Object.entries(maps)
           .find(map => map[1].mapName.toLowerCase()
