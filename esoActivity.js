@@ -5,7 +5,13 @@ const ESOC = 'http://eso-community.net';
 class EsoActivity {
   static async getLobbies() {
     const req = await request(`${ESOC}/assets/patch/api/lobbies.json`);
-    return JSON.parse(req);
+    try {
+      return JSON.parse(req);
+    } catch (e) {
+      console.error(`${new Date()} ${e}`);
+      console.error(req);
+      return [];
+    }
   }
 
   static getUserLink(player, patch) {
