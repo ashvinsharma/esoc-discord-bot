@@ -5,7 +5,13 @@ const ESOC = 'http://eso-community.net';
 class EsoActivity {
   static async getLobbies() {
     const req = await request(`${ESOC}/assets/patch/api/lobbies.json`);
-    return JSON.parse(req);
+    try {
+      return JSON.parse(req);
+    } catch (e) {
+      console.error(`${new Date()} ${e}`);
+      console.error(req);
+      return [];
+    }
   }
 
   static getUserLink(player, patch) {
@@ -94,8 +100,8 @@ class EsoActivity {
     if (mapObject === undefined) {
       try {
         mapObject = Object.entries(maps)
-          .find(map => map[1].mapName.toLowerCase()
-            .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
+          .find(map => map[1].mapName.toLowerCase().includes(mapName)
+        || mapName.includes(map[1].mapName.toLowerCase()));
       } catch (e) {
         console.error(`${new Date()} ${e}`);
         return `${ESOC}/images/aoe3/maps/unknown.png`;
