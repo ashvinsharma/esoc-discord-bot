@@ -1,9 +1,19 @@
 const request = require('request-promise');
+const os = require('os');
+const fs = require('fs');
+
+const ESOC = 'http://eso-community.net';
 
 class EsoActivity {
   static async getLobbies() {
-    const req = await request('http://eso-community.net/assets/patch/api/lobbies.json');
-    return JSON.parse(req);
+    const req = await request(`${ESOC}/assets/patch/api/lobbies.json`);
+    try {
+      return JSON.parse(req);
+    } catch (e) {
+      console.error(`${new Date()} ${e}`);
+      console.error(req);
+      return [];
+    }
   }
 
   static getUserLink(player, patch) {
@@ -31,12 +41,8 @@ class EsoActivity {
   }
 
   static getPatchIcon(patch) {
-    if (patch === 1) {
-      return 'http://eso-community.net/images/aoe3/patch-esoc-icon.png';
-    }
-    if (patch === 2) {
-      return 'http://eso-community.net/images/aoe3/patch-treaty-icon.png';
-    }
+    if (patch === 1) return `${ESOC}/images/aoe3/patch-esoc-icon.png`;
+    if (patch === 2) return `${ESOC}/images/aoe3/patch-treaty-icon.png`;
     return null;
   }
 
@@ -94,14 +100,23 @@ class EsoActivity {
       .toLowerCase();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
-      mapObject = Object.entries(maps)
-        .find(map => map[1].mapName.toLowerCase()
-          .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
-      // return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+      fs.writeFile('maps_name.txt', mapName + os.EOL, { flag: 'a' }, (err) => {
+        if (err) {
+          console.error(`${new Date()} ${err}`);
+        }
+      });
+      try {
+        mapObject = Object.entries(maps)
+          .find(map => map[1].mapName.toLowerCase()
+            .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
+      } catch (e) {
+        console.error(`${new Date()} ${e}`);
+        return `${ESOC}/images/aoe3/maps/unknown.png`;
+      }
     }
     let url = mapObject.MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;
-    url = `http://eso-community.net${url}`;
+    url = `${ESOC}${url}`;
     return url;
   }
 
@@ -110,7 +125,10 @@ class EsoActivity {
     game.players.map((p) => {
       if (p === null) count += 1;
     });
-    const map = this.getMap(game.map, game.patch);
+    let map = this.getMap(game.map, game.patch);
+    if (map[0] === map[0].toLowerCase()) {
+      map = map[0].toUpperCase() + map.slice(1);
+    }
     return {
       title: game.name,
       url: this.getUserLink(game.players[0], game.patch),

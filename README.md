@@ -5,7 +5,7 @@
 config.json
 ```javascript
 {
-  "prefix_query": "?",
+  "prefix": "!",
   "twitch_channel_id": "460187136281411585",
   "ep_channel_id": "460187200609583105",
   "general_channel_id": "460187255571480586",
