@@ -15,7 +15,7 @@ let lastRandom = null;
 class Utils {
   static async deleteRedundantMessages(deleteJobs) {
     if (deleteJobs.length >= 1) {
-      await Promise.all(deleteJobs).catch(e => console.error`${new Date()} ${e}`);
+      await Promise.all(deleteJobs).catch(e => console.error(`${new Date()} ${e}`));
     }
   }
 
