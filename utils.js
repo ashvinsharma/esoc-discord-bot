@@ -185,8 +185,8 @@ class Utils {
         MiniMapUrl: '/images/aoe3/maps/standard_maps.png',
       },
     ];
-    const getMap = 'SELECT a.map_id, a.map_name, m.*, p.username FROM esoc.maps_aliases a '
-      + 'INNER JOIN esoc.maps m ON m.ID = a.map_id '
+    const getMap = 'SELECT a.alias_id, a.name AS map_name, m.*, p.username FROM esoc.maps_alias a '
+      + 'INNER JOIN esoc.maps m ON m.ID = a.alias_id '
       + 'LEFT JOIN phpBB.p_users p ON p.user_id = m.Author';
     const [rows, fields] = await con.execute(getMap);
     maps = [...maps, ...rows];
