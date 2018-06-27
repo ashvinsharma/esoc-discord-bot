@@ -85,7 +85,7 @@ class Utils {
         if ((gameEmbeds.get(game.id) !== undefined)) {
           const message = await channel.fetchMessage(gameEmbeds.get(game.id));
           newGames.set(game.id, message.id);
-          message.edit('', { embed }).catch(e => console.errore.message);
+          message.edit('', { embed }).catch(e => console.error(`${new Date()} ${e}`));
           console.debug(`${new Date()} `, `${game.name} is updated`);
         }
         // Add
