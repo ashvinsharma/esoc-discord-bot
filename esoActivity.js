@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const os = require('os');
+const fs = require('fs');
 
 const ESOC = 'http://eso-community.net';
 
@@ -99,7 +100,7 @@ class EsoActivity {
       .toLowerCase();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
-      fs.writeFile('maps_name.txt', mapName + os.EOL, {'flag':'a'}, function (err) {
+      fs.writeFile('maps_name.txt', mapName + os.EOL, { flag: 'a' }, (err) => {
         if (err) {
           console.error(`${new Date()} ${err}`);
         }
