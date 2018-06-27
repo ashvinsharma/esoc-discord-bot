@@ -1,6 +1,6 @@
 # ESO-C Bot (Node.js)
 
-[Click here](https://discordapp.com/oauth2/authorize?client_id=455039093034713118&scope=bot) to add the bot to your personal server. Don't forget to add `config.json` and enter your channels' id in it.
+[Click here](https://discordapp.com/oauth2/authorize?client_id=460387987629277195&scope=bot) to add the bot to your personal server. Don't forget to add `config.json` and enter your channels' id in it.
 
 config.json
 ```javascript

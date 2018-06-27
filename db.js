@@ -7,10 +7,10 @@ const con = mysql.createPool(db);
 con.on('connection', (connection) => {
   console.debug('DB Connection established');
   connection.on('error', (err) => {
-    console.error(new Date(), 'MySQL error', err.code);
+    console.error(`${new Date()} MySQL error  ${err.code}`);
   });
   connection.on('close', (err) => {
-    console.error(new Date(), 'MySQL close', err);
+    console.error(`${new Date()} MySQL close ${err}`);
   });
 });
 
