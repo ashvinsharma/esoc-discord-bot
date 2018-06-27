@@ -100,18 +100,21 @@ class EsoActivity {
       .toLowerCase();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
-      fs.writeFile('maps_name.txt', mapName + os.EOL, { flag: 'a' }, (err) => {
-        if (err) {
-          console.error(`${new Date()} ${err}`);
+      mapObject = maps[mapName.slice(0, 20)];
+      if (mapObject === undefined) {
+        try {
+          mapObject = Object.entries(maps)
+            .find(map => map[1].mapName.toLowerCase()
+              .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
+        } catch (e) {
+          fs.writeFile('maps_name.txt', mapName + os.EOL, { flag: 'a' }, (err) => {
+            if (err) {
+              console.error(`${new Date()} ${err}`);
+            }
+          });
+          console.error(`${new Date()} ${e}`);
+          return `${ESOC}/images/aoe3/maps/unknown.png`;
         }
-      });
-      try {
-        mapObject = Object.entries(maps)
-          .find(map => map[1].mapName.toLowerCase()
-            .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
-      } catch (e) {
-        console.error(`${new Date()} ${e}`);
-        return `${ESOC}/images/aoe3/maps/unknown.png`;
       }
     }
     let url = mapObject.MiniMapUrl;
