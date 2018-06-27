@@ -1,6 +1,8 @@
 const request = require('request-promise');
 const fs = require('fs');
+const Discord = require('discord.js');
 
+const { escapeMarkdown } = Discord.Util;
 const clientID = 'l075cyh5nw7b2savfoc46nleqh2sg6';
 const prefixJsonData = 'user_';
 const apiTwitch = 'https://api.twitch.tv/helix/';
@@ -104,12 +106,12 @@ class Twitch {
       fields: [
         {
           name: 'Status',
-          value: `${stream.title}`,
+          value: escapeMarkdown(stream.title),
           inline: true,
         },
         {
           name: 'Viewers',
-          value: `${stream.viewer_count}`,
+          value: stream.viewer_count,
           inline: true,
         },
       ],
