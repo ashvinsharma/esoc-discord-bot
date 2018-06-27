@@ -1,7 +1,9 @@
 const request = require('request-promise');
 const os = require('os');
 const fs = require('fs');
+const Discord = require('discord.js');
 
+const { escapeMarkdown } = Discord.Util;
 const ESOC = 'http://eso-community.net';
 
 class EsoActivity {
@@ -133,7 +135,7 @@ class EsoActivity {
       map = map[0].toUpperCase() + map.slice(1);
     }
     return {
-      title: game.name,
+      title: escapeMarkdown(game.name),
       url: this.getUserLink(game.players[0], game.patch),
       color: this.getEmbedColor(game.patch),
       // 'timestamp': date.toISOString(),
@@ -154,7 +156,7 @@ class EsoActivity {
       fields: [
         {
           name: 'Host',
-          value: `${game.players[0]}`,
+          value: escapeMarkdown(game.players[0]),
           inline: true,
         },
         {
@@ -164,7 +166,7 @@ class EsoActivity {
         },
         {
           name: 'Map',
-          value: map,
+          value: escapeMarkdown(map),
           inline: true,
         },
         {
