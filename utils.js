@@ -15,7 +15,7 @@ let lastRandom = null;
 class Utils {
   static async deleteRedundantMessages(deleteJobs) {
     if (deleteJobs.length >= 1) {
-      await Promise.all(deleteJobs);
+      await Promise.all(deleteJobs).catch(e => console.error`${new Date()} ${e}`);
     }
   }
 
@@ -64,7 +64,7 @@ class Utils {
             });
         }
       });
-      this.deleteRedundantMessages(deleteStreams).catch(e => console.log(e.message));
+      this.deleteRedundantMessages(deleteStreams);
       streamEmbeds = tempStreamMap;
       await sleep(updateInterval);
     }
@@ -85,7 +85,7 @@ class Utils {
         if ((gameEmbeds.get(game.id) !== undefined)) {
           const message = await channel.fetchMessage(gameEmbeds.get(game.id));
           newGames.set(game.id, message.id);
-          message.edit('', { embed }).catch(e => console.log(e.message));
+          message.edit('', { embed }).catch(e => console.errore.message);
           console.debug(`${new Date()} `, `${game.name} is updated`);
         }
         // Add
@@ -104,7 +104,7 @@ class Utils {
           deleteGames.push(message.delete());
         }
       });
-      this.deleteRedundantMessages(deleteGames).catch(e => e.message);
+      this.deleteRedundantMessages(deleteGames);
       gameEmbeds = newGames;
       await sleep(updateInterval);
     }
