@@ -1,6 +1,6 @@
 .idea/
 node_modules/
 user.json
-config.json
 maps_name.txt
 Procfile
+.env

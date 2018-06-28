@@ -19,6 +19,7 @@
     "await-sleep": "0.0.1",
     "bufferutil": "^3.0.3",
     "discord.js": "^11.3.2",
+    "dotenv": "^6.0.0",
     "mysql2": "^1.5.3",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",

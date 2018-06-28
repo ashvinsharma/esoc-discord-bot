@@ -1,19 +1,12 @@
 # ESO-C Bot (Node.js)
 
-[Click here](https://discordapp.com/oauth2/authorize?client_id=460387987629277195&scope=bot) to add the bot to your personal server. Don't forget to add `config.json` and enter your channels' id in it.
+[Click here](https://discordapp.com/oauth2/authorize?client_id=460387987629277195&scope=bot) to add the bot to your personal server. Don't forget to enter your channels' id in `config.json`.
 
-config.json
-```javascript
-{
-  "prefix": "!",
-  "twitch_channel_id": "460187136281411585",
-  "ep_channel_id": "460187200609583105",
-  "general_channel_id": "460187255571480586",
-  "token": "NDYwMzg3OTg3NjI5Mjc3MTk1.DhEBRg.EiUTwQ3xTUU-mCO1n1RULEoPBt0",
-  "db": {
-    "host": "",
-    "user": "",
-    "password": ""
-  }
-}
+Add a file `.env` with your secret credentials and do NOT commit it.
+```
+DB_HOST=databaseHostname
+DB_USER=databaseUsername
+DB_PASSWORD=databasePassword
+DISCORD_TOKEN=discordToken
+
 ```
