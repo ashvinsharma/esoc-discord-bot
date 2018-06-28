@@ -1,17 +1,14 @@
 const Discord = require('discord.js');
-const fs = require('fs');
 const Utils = require('./utils');
 const { prefix, token, general_channel_id: generalChannel } = require('./config');
+const commands = require('./commands');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-fs.readdirSync('./commands')
-  .filter(file => file.endsWith('.js'))
-  .map((file) => {
-    const command = require(`./commands/${file}`); // eslint-disable-line
-    client.commands.set(command.name, command);
-  });
+Object.entries(commands).forEach(([key, command]) => {
+  client.commands.set(command.name, command);
+});
 
 client.on('ready', async () => {
   Utils.startGettingGames(client);
