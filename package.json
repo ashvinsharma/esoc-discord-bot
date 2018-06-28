@@ -8,7 +8,8 @@
     "npm": "*"
   },
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "lint": "eslint \"./**/*.js\""
   },
   "keywords": [
     "heroku",
@@ -18,7 +19,6 @@
     "await-sleep": "0.0.1",
     "bufferutil": "^3.0.3",
     "discord.js": "^11.3.2",
-    "eslint": "^4.19.1",
     "mysql2": "^1.5.3",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
@@ -27,6 +27,8 @@
     "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-node": "^6.0.1",
