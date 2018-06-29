@@ -1,24 +1,10 @@
 const request = require('request-promise');
 const fs = require('fs');
 const Discord = require('discord.js');
+const constants = require('./constants');
 
 const { escapeMarkdown } = Discord.Util;
-const clientID = 'l075cyh5nw7b2savfoc46nleqh2sg6';
 const prefixJsonData = 'user_';
-const apiTwitch = 'https://api.twitch.tv/helix/';
-const apiUsers = 'users?id=';
-const apiStreams = 'streams?game_id=10819';
-const optionsTwitch = {
-  headers: {
-    'Client-ID': clientID,
-  },
-  json: true,
-  timeout: '30',
-};
-const twitchUrl = 'https://www.twitch.tv/';
-const GRAY = 0x4f545c;
-const GOLD = 0xffa500;
-const GOLD_COUNT = 25;
 
 class Twitch {
   static async getUserFromCache(userID) {
@@ -35,7 +21,8 @@ class Twitch {
     let data;
     const temp = null;
     try {
-      const res = await request.get(apiTwitch + apiUsers + userID.toString(), optionsTwitch);
+      const res = await request.get(constants.TWITCH_API_URI
+        + constants.TWITCH_API_USERS_URI + userID.toString(), constants.TWITCH_OPTIONS);
       data = res.data[0]; // We are doing this
       data = JSON.stringify(data, ['id', 'login', 'display_name']); // to keep only
       data = JSON.parse(data); // the data we need.
@@ -68,7 +55,8 @@ class Twitch {
   }
 
   static async getStream() {
-    const res = await request(apiTwitch + apiStreams, optionsTwitch);
+    const res = await request(constants.TWITCH_API_URI
+      + constants.TWITCH_API_STREAMS_URI, constants.TWITCH_OPTIONS);
     const streams = res.data;
     const users = {};
     await Promise.all(streams.map(((stream) => {
@@ -87,8 +75,9 @@ class Twitch {
   }
 
   static async createEmbed(response, stream, user) {
-    const url = `${twitchUrl}${user.login}`;
-    const embedColor = (stream.viewer_count >= GOLD_COUNT) ? GOLD : GRAY;
+    const url = `${constants.TWITCH}${user.login}`;
+    const embedColor = (stream.viewer_count >= constants.GOLD_COUNT)
+      ? constants.GOLD : constants.GRAY;
     const image = this.getImageURL(stream);
     return {
       title: `${url}`,

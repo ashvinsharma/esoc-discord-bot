@@ -1,14 +1,13 @@
 const request = require('request-promise');
-const os = require('os');
 const fs = require('fs');
 const Discord = require('discord.js');
+const constants = require('./constants');
 
 const { escapeMarkdown } = Discord.Util;
-const ESOC = 'http://eso-community.net';
 
 class EsoActivity {
   static async getLobbies() {
-    const req = await request(`${ESOC}/assets/patch/api/lobbies.json`);
+    const req = await request(`${constants.ESOC}/assets/patch/api/lobbies.json`);
     try {
       return JSON.parse(req);
     } catch (e) {
@@ -39,12 +38,12 @@ class EsoActivity {
   }
 
   static isPatch(patch) {
-    return [1, 2, 3].some(element => element === patch);
+    return [1, 3].some(element => element === patch);
   }
 
   static getPatchIcon(patch) {
-    if (patch === 1) return `${ESOC}/images/aoe3/patch-esoc-icon.png`;
-    if (patch === 2) return `${ESOC}/images/aoe3/patch-treaty-icon.png`;
+    if (patch === 1) return `${constants.ESOC}/images/aoe3/patch-esoc-icon.png`;
+    if (patch === 2) return `${constants.ESOC}/images/aoe3/patch-treaty-icon.png`;
     return null;
   }
 
@@ -98,7 +97,7 @@ class EsoActivity {
   }
 
   static async getMapIcon(map, scenario, maps, unknownMaps) {
-    if (scenario) return `${ESOC}/images/aoe3/maps/scenario.png`;
+    if (scenario) return `${constants.ESOC}/images/aoe3/maps/scenario.png`;
     const mapName = map.trim();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
@@ -123,13 +122,13 @@ class EsoActivity {
               .includes(map[1].mapName.toLowerCase()))[1];
         } catch (e) {
           console.error(`${new Date()}: ${__filename}\n ${e}`);
-          return `${ESOC}/images/aoe3/maps/unknown.png`;
+          return `${constants.ESOC}/images/aoe3/maps/unknown.png`;
         }
       }
     }
     let url = mapObject.MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;
-    url = `${ESOC}${url}`;
+    url = `${constants.ESOC}${url}`;
     return url;
   }
 

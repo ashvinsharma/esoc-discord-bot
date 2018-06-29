@@ -5,8 +5,6 @@ const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 const constants = require('./constants');
 const fs = require('fs');
-const updateIntervalTwitch = 60000; // ms and not seconds.
-const updateIntervalESOC = 15000;
 const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
 const epChannel = process.env.DISCORD_CHANNEL_ID_EP;
 let lastRandom = null;
@@ -66,7 +64,7 @@ class Utils {
       });
       this.deleteRedundantMessages(deleteStreams);
       streamEmbeds = tempStreamMap;
-      await sleep(updateIntervalTwitch);
+      await sleep(constants.UPDATE_TWITCH_INTERVAL);
     }
   }
 
@@ -116,7 +114,7 @@ class Utils {
       });
       this.deleteRedundantMessages(deleteGames);
       gameEmbeds = newGames;
-      await sleep(updateIntervalESOC);
+      await sleep(constants.UPDATE_INTERVAL_ESOC);
     }
   }
 
