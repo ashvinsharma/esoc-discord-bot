@@ -7,7 +7,7 @@ const { escapeMarkdown } = Discord.Util;
 
 class EsoActivity {
   static async getLobbies() {
-    const req = await request(`${constants.ESOC}/assets/patch/api/lobbies.json`);
+    const req = await request(`${constants.ESOC}${constants.ESOC_LOBBIES_URI}`);
     try {
       return JSON.parse(req);
     } catch (e) {
@@ -19,9 +19,9 @@ class EsoActivity {
 
   static getUserLink(player, patch) {
     if (patch === 2) {
-      return `http://eso-community.net/ladder.php?patch=official&type=treaty&mode=overall&player=${player}`;
+      return `${constants.ESOC_SUPREMACY_STANDARD_LADDER}${player}`;
     }
-    return `http://eso-community.net/ladder.php?patch=esoc&type=supremacy&mode=overall&player=${player}`;
+    return `${constants.ESOC_SUPREMACY_TREATY_LADDER}${player}`;
   }
 
   static getPatch(patch) {
@@ -42,21 +42,21 @@ class EsoActivity {
   }
 
   static getPatchIcon(patch) {
-    if (patch === 1) return `${constants.ESOC}/images/aoe3/patch-esoc-icon.png`;
-    if (patch === 2) return `${constants.ESOC}/images/aoe3/patch-treaty-icon.png`;
+    if (patch === 1) return `${constants.ESOC}${constants.ESOC_PATCH_ICON}`;
+    if (patch === 2) return `${constants.ESOC}${constants.TREATY_PATCH_ICON}`;
     return null;
   }
 
   static getEmbedColor(patch) {
     switch (patch) {
       case 1:
-        return 0xc32025;
+        return constants.ESOC_PATCH_EMBED_COLOR;
       case 2:
-        return 0x0378c0;
+        return constants.TREATY_PATCH_EMBED_COLOR;
       case 3:
-        return 0xc27c0e;
+        return constants.XP_MOD_EMBED_COLOR;
       default:
-        return 0x4f545c;
+        return constants.GRAY;
     }
   }
 
@@ -97,7 +97,7 @@ class EsoActivity {
   }
 
   static async getMapIcon(map, scenario, maps, unknownMaps) {
-    if (scenario) return `${constants.ESOC}/images/aoe3/maps/scenario.png`;
+    if (scenario) return `${constants.ESOC}${constants.SCENARIO_IMAGE}`;
     const mapName = map.trim();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
@@ -122,7 +122,7 @@ class EsoActivity {
               .includes(map[1].mapName.toLowerCase()))[1];
         } catch (e) {
           console.error(`${new Date()}: ${__filename}\n ${e}`);
-          return `${constants.ESOC}/images/aoe3/maps/unknown.png`;
+          return `${constants.ESOC}${constants.UNKNOWN_MAP_IMAGE}`;
         }
       }
     }

@@ -48,6 +48,15 @@ const MAPS = [
 const UPDATE_TWITCH_INTERVAL = 60000; // milli seconds
 const UPDATE_INTERVAL_ESOC = 15000; // milli seconds
 const ESOC = 'http://eso-community.net';
+const ESOC_LOBBIES_URI = '/assets/patch/api/lobbies.json';
+const ESOC_SUPREMACY_STANDARD_LADDER = `${ESOC}/ladder.php?patch=official&type=treaty&mode=overall&player=`;
+const ESOC_SUPREMACY_TREATY_LADDER = `${ESOC}/ladder.php?patch=esoc&type=supremacy&mode=overall&player=`;
+const ESOC_PATCH_ICON = '/images/aoe3/patch-esoc-icon.png';
+const ESOC_PATCH_EMBED_COLOR = 0xc32025;
+const SCENARIO_IMAGE = '/images/aoe3/maps/scenario.png';
+const UNKNOWN_MAP_IMAGE = '/images/aoe3/maps/unknown.png';
+const TREATY_PATCH_ICON = '/images/aoe3/patch-treaty-icon.png';
+const TREATY_PATCH_EMBED_COLOR = 0x0378c0;
 const TWITCH = 'https://www.twitch.tv/';
 const TWITCH_API_URI = 'https://api.twitch.tv/helix/';
 const TWITCH_CLIENT_ID = 'l075cyh5nw7b2savfoc46nleqh2sg6';
@@ -66,6 +75,7 @@ const MAPS_QUERY = 'SELECT a.alias_id, a.name AS map_name, m.*, p.username FROM 
 const GRAY = 0x4f545c;
 const GOLD = 0xffa500;
 const GOLD_COUNT = 25;
+const XP_MOD_EMBED_COLOR = 0xc27c0e;
 
 module.exports = {
   MAPS,
@@ -73,6 +83,13 @@ module.exports = {
   UPDATE_TWITCH_INTERVAL,
   UPDATE_INTERVAL_ESOC,
   ESOC,
+  ESOC_LOBBIES_URI,
+  ESOC_PATCH_ICON,
+  ESOC_PATCH_EMBED_COLOR,
+  ESOC_SUPREMACY_TREATY_LADDER,
+  ESOC_SUPREMACY_STANDARD_LADDER,
+  TREATY_PATCH_ICON,
+  TREATY_PATCH_EMBED_COLOR,
   GRAY,
   GOLD,
   GOLD_COUNT,
@@ -82,4 +99,7 @@ module.exports = {
   TWITCH_API_USERS_URI,
   TWITCH_API_STREAMS_URI,
   TWITCH_OPTIONS,
+  SCENARIO_IMAGE,
+  UNKNOWN_MAP_IMAGE,
+  XP_MOD_EMBED_COLOR,
 };
