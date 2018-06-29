@@ -1,5 +1,4 @@
 const request = require('request-promise');
-const os = require('os');
 const fs = require('fs');
 const Discord = require('discord.js');
 const constants = require('./constants');
@@ -39,7 +38,7 @@ class EsoActivity {
   }
 
   static isPatch(patch) {
-    return [1, 2, 3].some(element => element === patch);
+    return [1, 3].some(element => element === patch);
   }
 
   static getPatchIcon(patch) {
