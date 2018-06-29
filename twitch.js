@@ -45,7 +45,7 @@ class Twitch {
       fs.writeFileSync('user.json', info); // We write back the object to the file.
       return data;
     } catch (e) {
-      console.error(`${new Date()} ${e}`);
+      console.error(`${new Date()}: ${__filename}\n ${e}`);
     }
     return temp;
   }
@@ -61,7 +61,7 @@ class Twitch {
         const user = prefixJsonData + userID;
         userData = await this.writeToCache(userID, user);
       } catch (e) {
-        console.error(`${new Date()} ${e}`);
+        console.error(`${new Date()}: ${__filename}\n ${e}`);
       }
     }
     return userData;
@@ -74,7 +74,7 @@ class Twitch {
     await Promise.all(streams.map(((stream) => {
       users[`user_${stream.user_id}`] = this.getUser(stream.user_id);
     })))
-      .catch(e => console.error(`${new Date()} ${e}`));
+      .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
     return {
       streams,
       users,

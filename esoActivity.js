@@ -12,7 +12,7 @@ class EsoActivity {
     try {
       return JSON.parse(req);
     } catch (e) {
-      console.error(`${new Date()} ${e}`);
+      console.error(`${new Date()}: ${__filename}\n ${e}`);
       console.error(req);
       return [];
     }
@@ -97,24 +97,32 @@ class EsoActivity {
     return null;
   }
 
-  static async getMapIcon(map, maps) {
-    const mapName = map.trim()
-      .toLowerCase();
+  static async getMapIcon(map, scenario, maps, unknownMaps) {
+    if (scenario) return `${ESOC}/images/aoe3/maps/scenario.png`;
+    const mapName = map.trim();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
+      if (!unknownMaps.has(mapName)) {
+        try {
+          unknownMaps.add(mapName);
+          fs.writeFile('maps_name.json', JSON.stringify([...unknownMaps], null, 2), (err) => {
+            if (err) {
+              console.error(`${new Date()}: ${__filename}\n ${err}`);
+            }
+          });
+        } catch (e) {
+          console.error(`${new Date()}: ${__filename}\n ${e}`);
+        }
+      }
       mapObject = maps[mapName.slice(0, 20)];
       if (mapObject === undefined) {
         try {
           mapObject = Object.entries(maps)
             .find(map => map[1].mapName.toLowerCase()
-              .includes(mapName) || mapName.includes(map[1].mapName.toLowerCase()))[1];
+              .includes(mapName.toLowerCase()) || mapName.toLowerCase()
+              .includes(map[1].mapName.toLowerCase()))[1];
         } catch (e) {
-          fs.writeFile('maps_name.txt', mapName + os.EOL, { flag: 'a' }, (err) => {
-            if (err) {
-              console.error(`${new Date()} ${err}`);
-            }
-          });
-          console.error(`${new Date()} ${e}`);
+          console.error(`${new Date()}: ${__filename}\n ${e}`);
           return `${ESOC}/images/aoe3/maps/unknown.png`;
         }
       }
@@ -125,7 +133,7 @@ class EsoActivity {
     return url;
   }
 
-  static async createEmbed(game, maps) {
+  static async createEmbed(game, maps, unknownMaps) {
     let count = 0;
     game.players.map((p) => {
       if (p === null) count += 1;
@@ -144,7 +152,7 @@ class EsoActivity {
       //     'text': `Created At`
       // },
       thumbnail: {
-        url: await this.getMapIcon(map, maps),
+        url: await this.getMapIcon(map, game.scenario, maps, unknownMaps),
       },
       image: {
         url: '',
