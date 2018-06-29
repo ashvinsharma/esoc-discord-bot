@@ -1,8 +1,10 @@
+require('dotenv').config();
 const Discord = require('discord.js');
 const Utils = require('./utils');
-const { prefix, token, general_channel_id: generalChannel } = require('./config');
+const { prefix } = require('./config');
 const commands = require('./commands');
 
+const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
@@ -39,7 +41,7 @@ client.on('message', (message) => {
   }
 });
 
-client.login(token)
+client.login(process.env.DISCORD_TOKEN)
   .then(() => {
     console.debug(`${new Date()} `, 'logged in!');
   });
