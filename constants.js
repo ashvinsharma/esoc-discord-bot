@@ -49,6 +49,7 @@ const UPDATE_TWITCH_INTERVAL = 60000; // milli seconds
 const UPDATE_INTERVAL_ESOC = 15000; // milli seconds
 const ESOC = 'http://eso-community.net';
 const TWITCH = 'https://www.twitch.tv/';
+const TWITCH_API_URI = 'https://api.twitch.tv/helix/';
 const TWITCH_CLIENT_ID = 'l075cyh5nw7b2savfoc46nleqh2sg6';
 const TWITCH_API_USERS_URI = 'users?id=';
 const TWITCH_API_STREAMS_URI = 'streams?game_id=10819';
@@ -76,6 +77,7 @@ module.exports = {
   GOLD,
   GOLD_COUNT,
   TWITCH,
+  TWITCH_API_URI,
   TWITCH_CLIENT_ID,
   TWITCH_API_USERS_URI,
   TWITCH_API_STREAMS_URI,
