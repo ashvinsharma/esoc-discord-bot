@@ -2,5 +2,5 @@
 node_modules/
 user.json
 config.json
-maps_name.txt
+maps_name.json
 Procfile
