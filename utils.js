@@ -4,6 +4,7 @@ const con = require('./db');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 const constants = require('./constants');
+const fs = require('fs');
 const updateIntervalTwitch = 60000; // ms and not seconds.
 const updateIntervalESOC = 15000;
 const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
@@ -13,7 +14,8 @@ let lastRandom = null;
 class Utils {
   static async deleteRedundantMessages(deleteJobs) {
     if (deleteJobs.length >= 1) {
-      await Promise.all(deleteJobs).catch(e => console.error(`${new Date()} ${e}`));
+      await Promise.all(deleteJobs)
+        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
     }
   }
 
@@ -51,7 +53,7 @@ class Utils {
           tempStreamMap.set(user.display_name, m.id);
         }
       }))
-        .catch(e => console.error(`${new Date()} ${e}`));
+        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
       // Deletes the streams if not found in the response
       const deleteStreams = [];
       streamEmbeds.forEach((val, key, map) => {
@@ -68,8 +70,17 @@ class Utils {
     }
   }
 
+  static getUnknownMaps() {
+    try {
+      return new Set(JSON.parse(fs.readFileSync('maps_name.json', 'utf8')));
+    } catch (err) {
+      return new Set();
+    }
+  }
+
   static async startGettingGames(client) {
     const maps = await Utils.getMaps();
+    let unknownMaps = Utils.getUnknownMaps();
     let gameEmbeds = new Map();
     const channel = client.channels.get(epChannel);
     channel.bulkDelete(100, false);
@@ -78,12 +89,13 @@ class Utils {
       const newGames = new Map();
       const games = await ESO.getLobbies();
       await Promise.all(games.map(async (game) => {
-        const embed = await ESO.createEmbed(game, maps);
+        const embed = await ESO.createEmbed(game, maps, unknownMaps);
         // Update
         if ((gameEmbeds.get(game.id) !== undefined)) {
           const message = await channel.fetchMessage(gameEmbeds.get(game.id));
           newGames.set(game.id, message.id);
-          message.edit('', { embed }).catch(e => console.error(`${new Date()} ${e}`));
+          message.edit('', { embed })
+            .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
           console.debug(`${new Date()} `, `${game.name} is updated`);
         }
         // Add
@@ -93,7 +105,7 @@ class Utils {
           newGames.set(game.id, message.id);
         }
       }))
-        .catch(e => console.error(`${new Date()} ${e}`));
+        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
       // Remove
       const deleteGames = [];
       gameEmbeds.forEach(async (val, key, map) => {
@@ -137,7 +149,7 @@ class Utils {
     let maps = [];
 
     try {
-      [maps] = await con.execute(constants.MAPS_QUERY)
+      [maps] = await con.execute(constants.MAPS_QUERY);
     } catch (error) {
       console.error('Failed to fetch maps from database: ', error);
     }
@@ -152,7 +164,7 @@ class Utils {
 
     // Turn array into object, mapname as keys
     mapArray.forEach(map => {
-      maps[map.mapName.toLowerCase()] = map;
+      maps[map.mapName] = map;
     });
 
     return maps;

@@ -1,6 +1,7 @@
 .idea/
 node_modules/
 user.json
-maps_name.txt
+maps_name.json
+.gitignore
 Procfile
 .env

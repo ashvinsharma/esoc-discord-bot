@@ -36,7 +36,7 @@ client.on('message', (message) => {
     client.commands.get(command)
       .execute(message, args);
   } catch (e) {
-    console.error(`${new Date()} ${e}`);
+    console.error(`${new Date()}: ${__filename}\n ${e}`);
     message.reply('error');
   }
 });

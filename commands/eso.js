@@ -16,6 +16,7 @@ module.exports = {
   name: 'eso',
   description: 'Tells if ESO is down or not.',
   async execute(message, args) {
-    await check(message).catch(e => console.error(`${new Date()} ${e}`));
+    await check(message)
+      .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
   },
 };
