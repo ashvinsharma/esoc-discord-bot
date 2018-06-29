@@ -1,14 +1,13 @@
 /* eslint-disable */
 const sleep = require('await-sleep');
 const con = require('./db');
-const { twitch_channel_id: liveChannel } = require('./config');
-const { ep_channel_id: epChannel } = require('./config');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 const constants = require('./constants');
 const updateIntervalTwitch = 60000; // ms and not seconds.
 const updateIntervalESOC = 15000;
-
+const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
+const epChannel = process.env.DISCORD_CHANNEL_ID_EP;
 let lastRandom = null;
 
 class Utils {
