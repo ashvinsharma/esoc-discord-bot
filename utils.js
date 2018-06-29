@@ -1,20 +1,21 @@
+/* eslint-disable */
 const sleep = require('await-sleep');
 const con = require('./db');
-const {
-  twitch_channel_id: liveChannel,
-} = require('./config');
-const { ep_channel_id: epChannel } = require('./config');
-const ESO = require('./eso');
+const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
-
-const updateInterval = 60000; // ms and not seconds.
-
+const constants = require('./constants');
+const fs = require('fs');
+const updateIntervalTwitch = 60000; // ms and not seconds.
+const updateIntervalESOC = 15000;
+const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
+const epChannel = process.env.DISCORD_CHANNEL_ID_EP;
 let lastRandom = null;
 
 class Utils {
   static async deleteRedundantMessages(deleteJobs) {
     if (deleteJobs.length >= 1) {
-      await Promise.all(deleteJobs);
+      await Promise.all(deleteJobs)
+        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
     }
   }
 
@@ -52,7 +53,7 @@ class Utils {
           tempStreamMap.set(user.display_name, m.id);
         }
       }))
-        .catch(e => console.error(`${new Date()} `, e));
+        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
       // Deletes the streams if not found in the response
       const deleteStreams = [];
       streamEmbeds.forEach((val, key, map) => {
@@ -65,50 +66,21 @@ class Utils {
       });
       this.deleteRedundantMessages(deleteStreams);
       streamEmbeds = tempStreamMap;
-      await sleep(updateInterval);
+      await sleep(updateIntervalTwitch);
+    }
+  }
+
+  static getUnknownMaps() {
+    try {
+      return new Set(JSON.parse(fs.readFileSync('maps_name.json', 'utf8')));
+    } catch (err) {
+      return new Set();
     }
   }
 
   static async startGettingGames(client) {
-    let maps = [
-      {
-        DisplayName: 'unknown',
-        MiniMapUrl: '/images/aoe3/maps/unknown.png',
-      },
-      {
-        DisplayName: 'large maps',
-        MiniMapUrl: '/images/aoe3/maps/large_maps.png',
-      },
-      {
-        DisplayName: 'asian maps',
-        MiniMapUrl: '/images/aoe3/maps/asian_maps.png',
-      },
-      {
-        DisplayName: 'all maps',
-        MiniMapUrl: '/images/aoe3/maps/all_maps.png',
-      },
-      {
-        DisplayName: 'team maps',
-        MiniMapUrl: '/images/aoe3/maps/team_maps.jpg',
-      },
-      {
-        DisplayName: 'knb maps',
-        MiniMapUrl: '/images/aoe3/maps/kb_maps.png',
-      },
-      {
-        DisplayName: 'esoc maps',
-        MiniMapUrl: '/images/aoe3/maps/esoc_maps.jpg',
-      },
-      {
-        DisplayName: 'classic maps',
-        MiniMapUrl: '/images/aoe3/maps/classic_maps.png',
-      },
-      {
-        DisplayName: 'standard maps',
-        MiniMapUrl: '/images/aoe3/maps/standard_maps.png',
-      },
-    ];
-    maps = await Utils.addMaps(maps);
+    const maps = await Utils.getMaps();
+    let unknownMaps = Utils.getUnknownMaps();
     let gameEmbeds = new Map();
     const channel = client.channels.get(epChannel);
     channel.bulkDelete(100, false);
@@ -117,12 +89,13 @@ class Utils {
       const newGames = new Map();
       const games = await ESO.getLobbies();
       await Promise.all(games.map(async (game) => {
-        const embed = await ESO.createEmbed(game, maps);
+        const embed = await ESO.createEmbed(game, maps, unknownMaps);
         // Update
         if ((gameEmbeds.get(game.id) !== undefined)) {
           const message = await channel.fetchMessage(gameEmbeds.get(game.id));
           newGames.set(game.id, message.id);
-          message.edit('', { embed });
+          message.edit('', { embed })
+            .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
           console.debug(`${new Date()} `, `${game.name} is updated`);
         }
         // Add
@@ -132,7 +105,7 @@ class Utils {
           newGames.set(game.id, message.id);
         }
       }))
-        .catch(e => console.error(`${new Date()} `, e));
+        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
       // Remove
       const deleteGames = [];
       gameEmbeds.forEach(async (val, key, map) => {
@@ -143,7 +116,7 @@ class Utils {
       });
       this.deleteRedundantMessages(deleteGames);
       gameEmbeds = newGames;
-      await sleep(updateInterval);
+      await sleep(updateIntervalESOC);
     }
   }
 
@@ -172,13 +145,29 @@ class Utils {
     return templates[idx];
   }
 
-  static async addMaps(maps) {
-    const getMap = 'SELECT esoc.maps.ID, esoc.maps.DisplayName, esoc.maps.MiniMapUrl, '
-      + 'phpBB.p_users.username, esoc.maps.TPs, esoc.maps.Natives, esoc.maps.Outlaws, '
-      + 'esoc.maps.Date, esoc.maps.GameType FROM esoc.maps LEFT JOIN phpBB.p_users ON '
-      + 'esoc.maps.Author = phpBB.p_users.user_id';
-    const [rows, fields] = await con.execute(getMap);
-    return [...maps, ...rows];
+  static async fetchMapsFromDb() {
+    let maps = [];
+
+    try {
+      [maps] = await con.execute(constants.MAPS_QUERY);
+    } catch (error) {
+      console.error('Failed to fetch maps from database: ', error);
+    }
+
+    // Turn map_name into mapName
+    return maps.map(({ map_name, ...others }) => ({ mapName: map_name, ...others }));
+  }
+
+  static async getMaps() {
+    const maps = {};
+    const mapArray = [...constants.MAPS, ...await Utils.fetchMapsFromDb()];
+
+    // Turn array into object, mapname as keys
+    mapArray.forEach(map => {
+      maps[map.mapName] = map;
+    });
+
+    return maps;
   }
 }
 

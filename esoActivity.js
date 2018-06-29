@@ -1,9 +1,21 @@
 const request = require('request-promise');
+const os = require('os');
+const fs = require('fs');
+const Discord = require('discord.js');
 
-class ESO {
+const { escapeMarkdown } = Discord.Util;
+const ESOC = 'http://eso-community.net';
+
+class EsoActivity {
   static async getLobbies() {
-    const req = await request('http://eso-community.net/assets/patch/api/lobbies.json');
-    return JSON.parse(req);
+    const req = await request(`${ESOC}/assets/patch/api/lobbies.json`);
+    try {
+      return JSON.parse(req);
+    } catch (e) {
+      console.error(`${new Date()}: ${__filename}\n ${e}`);
+      console.error(req);
+      return [];
+    }
   }
 
   static getUserLink(player, patch) {
@@ -31,20 +43,22 @@ class ESO {
   }
 
   static getPatchIcon(patch) {
-    if (patch === 1) {
-      return 'http://eso-community.net/images/aoe3/patch-esoc-icon.png';
-    }
-    if (patch === 2) {
-      return 'http://eso-community.net/images/aoe3/patch-treaty-icon.png';
-    }
+    if (patch === 1) return `${ESOC}/images/aoe3/patch-esoc-icon.png`;
+    if (patch === 2) return `${ESOC}/images/aoe3/patch-treaty-icon.png`;
     return null;
   }
 
   static getEmbedColor(patch) {
-    if (patch === 2) {
-      return 0x0378c0;
+    switch (patch) {
+      case 1:
+        return 0xc32025;
+      case 2:
+        return 0x0378c0;
+      case 3:
+        return 0xc27c0e;
+      default:
+        return 0x4f545c;
     }
-    return 0xc32025;
   }
 
   static getGameMode(game) {
@@ -83,29 +97,53 @@ class ESO {
     return null;
   }
 
-  static async getMapIcon(map, maps) {
+  static async getMapIcon(map, scenario, maps, unknownMaps) {
+    if (scenario) return `${ESOC}/images/aoe3/maps/scenario.png`;
     const mapName = map.trim();
-    const mapObject = maps.find(map => map.DisplayName.toLowerCase()
-      .includes(mapName.toLowerCase()) || mapName.toLowerCase()
-      .includes(map.DisplayName.toLowerCase()));
+    let mapObject = maps[mapName];
     if (mapObject === undefined) {
-      console.log(map);
-      return 'https://cdn.discordapp.com/attachments/275035741678075905/282788163272048640/unknown.png';
+      if (!unknownMaps.has(mapName)) {
+        try {
+          unknownMaps.add(mapName);
+          fs.writeFile('maps_name.json', JSON.stringify([...unknownMaps], null, 2), (err) => {
+            if (err) {
+              console.error(`${new Date()}: ${__filename}\n ${err}`);
+            }
+          });
+        } catch (e) {
+          console.error(`${new Date()}: ${__filename}\n ${e}`);
+        }
+      }
+      mapObject = maps[mapName.slice(0, 20)];
+      if (mapObject === undefined) {
+        try {
+          mapObject = Object.entries(maps)
+            .find(map => map[1].mapName.toLowerCase()
+              .includes(mapName.toLowerCase()) || mapName.toLowerCase()
+              .includes(map[1].mapName.toLowerCase()))[1];
+        } catch (e) {
+          console.error(`${new Date()}: ${__filename}\n ${e}`);
+          return `${ESOC}/images/aoe3/maps/unknown.png`;
+        }
+      }
     }
     let url = mapObject.MiniMapUrl;
     if (url[0] !== '/') url = `/${url}`;
-    url = `http://eso-community.net${url}`;
+    url = `${ESOC}${url}`;
     return url;
   }
 
-  static async createEmbed(game, maps) {
+  static async createEmbed(game, maps, unknownMaps) {
     let count = 0;
     game.players.map((p) => {
       if (p === null) count += 1;
     });
-    const map = this.getMap(game.map, game.patch);
+    let map = this.getMap(game.map, game.patch);
+    if (map[0] === map[0].toLowerCase()) {
+      map = map[0].toUpperCase() + map.slice(1);
+    }
     return {
-      title: game.name,
+      title: escapeMarkdown(game.name),
       url: this.getUserLink(game.players[0], game.patch),
       color: this.getEmbedColor(game.patch),
       // 'timestamp': date.toISOString(),
@@ -114,7 +152,7 @@ class ESO {
       //     'text': `Created At`
       // },
       thumbnail: {
-        url: await this.getMapIcon(map, maps),
+        url: await this.getMapIcon(map, game.scenario, maps, unknownMaps),
       },
       image: {
         url: '',
@@ -126,7 +164,7 @@ class ESO {
       fields: [
         {
           name: 'Host',
-          value: `${game.players[0]}`,
+          value: escapeMarkdown(game.players[0]),
           inline: true,
         },
         {
@@ -136,7 +174,7 @@ class ESO {
         },
         {
           name: 'Map',
-          value: map,
+          value: escapeMarkdown(map),
           inline: true,
         },
         {
@@ -149,4 +187,4 @@ class ESO {
   }
 }
 
-module.exports = ESO;
+module.exports = EsoActivity;

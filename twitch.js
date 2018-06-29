@@ -1,6 +1,8 @@
 const request = require('request-promise');
 const fs = require('fs');
+const Discord = require('discord.js');
 
+const { escapeMarkdown } = Discord.Util;
 const clientID = 'l075cyh5nw7b2savfoc46nleqh2sg6';
 const prefixJsonData = 'user_';
 const apiTwitch = 'https://api.twitch.tv/helix/';
@@ -43,7 +45,7 @@ class Twitch {
       fs.writeFileSync('user.json', info); // We write back the object to the file.
       return data;
     } catch (e) {
-      console.error(`${new Date()} `, e);
+      console.error(`${new Date()}: ${__filename}\n ${e}`);
     }
     return temp;
   }
@@ -59,7 +61,7 @@ class Twitch {
         const user = prefixJsonData + userID;
         userData = await this.writeToCache(userID, user);
       } catch (e) {
-        console.error(`${new Date()} `, e);
+        console.error(`${new Date()}: ${__filename}\n ${e}`);
       }
     }
     return userData;
@@ -72,7 +74,7 @@ class Twitch {
     await Promise.all(streams.map(((stream) => {
       users[`user_${stream.user_id}`] = this.getUser(stream.user_id);
     })))
-      .catch(e => console.error(`${new Date()} `, e));
+      .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
     return {
       streams,
       users,
@@ -104,12 +106,12 @@ class Twitch {
       fields: [
         {
           name: 'Status',
-          value: `${stream.title}`,
+          value: escapeMarkdown(stream.title),
           inline: true,
         },
         {
           name: 'Viewers',
-          value: `${stream.viewer_count}`,
+          value: stream.viewer_count,
           inline: true,
         },
       ],
