@@ -1,7 +1,10 @@
 const mysql = require('mysql2/promise');
-const { db } = require('./config.json');
 
-const con = mysql.createPool(db);
+const con = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+});
 
 // Attempt to catch disconnects
 con.on('connection', (connection) => {
