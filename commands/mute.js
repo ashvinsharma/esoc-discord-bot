@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const { mute, unmute } = require('../tasks');
 
 function mentionToUserId(mention) {
@@ -41,28 +42,49 @@ function validate(message, userToMute, minutesMuted, reason) {
 module.exports = {
   name: 'mute',
   description: '"!mute [@username] [minutes] [reason]" will mute "username" for [minutes] minutes',
-  args: ['userToMute', 'minutesMuted', 'reason'],
   execute: async (message, args) => {
     const userToMute = message.guild.members.get(mentionToUserId(args[0]));
     const minutesMuted = parseInt(args[1], 10);
     const reason = args.slice(2).join(' ');
+    const moderator = message.author;
 
     if (!validate(message, userToMute, minutesMuted, reason)) {
       return;
     }
 
-    await mute(userToMute, message.guild, minutesMuted, reason);
+    await mute(userToMute, moderator, message.guild, minutesMuted, reason);
 
     setTimeout(async () => {
       await unmute(userToMute, message.guild);
     }, minutesMuted * 1000 * 60);
 
-    const reply = `Muting <@${userToMute.id}> for ${minutesMuted} minutes. Reason: ${reason}`;
+    const embedReply = new Discord.RichEmbed({
+      title: 'MUTED',
+      description: `<@${userToMute.id}>`,
+      fields: [
+        {
+          name: 'Minutes muted',
+          value: minutesMuted,
+          inline: true,
+        },
+        {
+          name: 'Moderator',
+          value: `<@${moderator.id}>`,
+          inline: true,
+        },
+        {
+          name: 'Reason',
+          value: reason,
+          inline: true,
+        },
+      ],
+    });
+
     const modLogChannel = message.guild.channels.find('name', 'mod_log');
     if (modLogChannel) {
-      modLogChannel.send(reply);
+      modLogChannel.send(embedReply);
     } else {
-      message.author.send(reply);
+      message.author.send(embedReply);
     }
   },
 };
