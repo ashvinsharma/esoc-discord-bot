@@ -1,10 +1,11 @@
 /* eslint-disable */
 const sleep = require('await-sleep');
+const fs = require('fs');
+const path = require('path');
 const con = require('./db');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 const constants = require('./constants');
-const fs = require('fs');
 const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
 const epChannel = process.env.DISCORD_CHANNEL_ID_EP;
 let lastRandom = null;
@@ -166,6 +167,76 @@ class Utils {
     });
 
     return maps;
+  }
+
+  static async ensureMutedRolePermissions(guild) {
+    const mutedRole = guild.roles.find('name', 'Muted');
+
+    if (!mutedRole) {
+      return console.error(`No mutedRole exists in ${guild.name}, and failed to create one.`);
+    }
+
+    try {
+      return await Promise.all(Array.from(guild.channels, async ([channelId, channel]) => {
+        return await channel.overwritePermissions(mutedRole, {
+          SEND_MESSAGES: false,
+          ADD_REACTIONS: false,
+        });
+      }));
+    } catch (error) {
+      return console.error(`Failed to set channel permissions of mutedRole in ${guild.name}. Error: ${error}`);
+    }
+  }
+
+  static async createMutedRole(guild) {
+    await guild.createRole({
+      name: 'Muted',
+      color: '#FF0000',
+      permissions: [],
+    }).catch(error => console.error(`Failed to create mutedRole in ${guild.name}. Error: ${error}`));
+
+    await Utils.ensureMutedRolePermissions(guild);
+  }
+
+  static async ensureMutedRolesExists(guilds) {
+    await Promise.all(Array.from(guilds, async ([guildId, guild]) => {
+      const mutedRole = guild.roles.find('name', 'Muted');
+
+      if (!mutedRole) {
+        await Utils.createMutedRole(guild);
+      }
+    })).catch(console.error);
+  }
+
+  static async unmuteUsers(guilds, mutedUsers) {
+    await Promise.all(Object.entries(mutedUsers).map(async ([userId, user]) => {
+      if (Date.now() > user.unmuteAt) {
+        const guild = guilds.get(user.guildId);
+        const mutedRole = guild.roles.find('name', 'Muted');
+        await guild.members.get(userId).removeRole(mutedRole).catch(error => console.error(`Failed to remove muted role from user. Error: ${error}`));
+        delete mutedUsers[userId];
+      }
+    }));
+
+    Utils.writeJson(mutedUsers, path.join(__dirname, './data/mutedUsers.json'));
+  }
+
+  static writeJson(json, filePath) {
+    // filePath: Absolute path to file, including filename
+    fs.writeFileSync(filePath, JSON.stringify(json, null, 2));
+  }
+
+  static readJson(filePath, fallback) {
+    // filePath: Absolute path to file, including filename
+    try {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (error) {
+      if (fallback !== undefined) {
+        return fallback;
+      }
+
+      throw new Error(`Failed to parse/read json file, error: ${error}`);
+    }
   }
 }
 

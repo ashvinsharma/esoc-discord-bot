@@ -3,3 +3,4 @@ node_modules/
 user.json
 maps_name.json
 .env
+data/*.json
