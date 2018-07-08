@@ -17,8 +17,9 @@ client.on('ready', async () => {
 });
 
 client.on('guildMemberAdd', (member) => {
-  const channel = client.channels.get(generalChannel);
-  channel.send(Utils.getMessage(member));
+  // temporarily disable this (too many messages)
+  /// const channel = client.channels.get(generalChannel);
+  // channel.send(Utils.getMessage(member));
 });
 
 client.on('message', (message) => {
