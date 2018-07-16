@@ -6,15 +6,17 @@ const con = require('./db');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 const constants = require('./constants');
+const { log, logError } = require('./logger');
 const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
 const epChannel = process.env.DISCORD_CHANNEL_ID_EP;
 let lastRandom = null;
 
 class Utils {
   static async deleteRedundantMessages(deleteJobs) {
+    log('Delete redundant messages');
     if (deleteJobs.length >= 1) {
       await Promise.all(deleteJobs)
-        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
+        .catch(error => console.error(`Failed to delete redundant messages. Error: ${error}`));
     }
   }
 
@@ -27,57 +29,73 @@ class Utils {
    * @return Prints streams on the live-channel
    */
   static async startGettingStreams(client) {
+    log('Start Getting Streams...')
     let streamEmbeds = new Map();
     const channel = client.channels.get(liveChannel);
-    channel.bulkDelete(100, false);
+    log('Delete 100 last messages in stream channel...');
+    channel.bulkDelete(100, false)
+      .then(() => log('Delete successful'))
+      .catch(error => logError(`Failed to delete messages. Error: ${error}`));
     // noinspection InfiniteLoopJS
     while (true) {
       const tempStreamMap = new Map();
+      log('Twitch get/refresh streams..');
       const response = await Twitch.getStream();
+      log('Found streams');
       const streams = response.streams;
       await Promise.all(streams.map(async (stream) => {
         const user = await response.users[`user_${stream.user_id}`];
+        log('Create embed..');
         const embed = await Twitch.createEmbed(response, stream, user);
+        log('Created embed successfully');
         // Update the streams if changed
         if (streamEmbeds.get(user.display_name) !== undefined) {
+          log(`Stream "${user.display_name}" updated. Edit discord message..`);
           const m = await channel.fetchMessage(streamEmbeds.get(user.display_name));
           tempStreamMap.set(user.display_name, m.id);
           m.edit('', { embed });
-          console.debug(`${new Date()} `, `${user.display_name} stream updated`);
+          log(`"${user.display_name}" stream updated successfully`);
         }
         // Adds the stream if not in the map
         if (streamEmbeds.get(user.display_name) === undefined) {
+          log(`Adding stream "${user.display_name}" to channel..`);
           const m = await channel.send({ embed });
-          console.debug(`${new Date()} `, `${user.display_name} stream added`);
+          log(`"${user.display_name}" stream added successfully`);
           tempStreamMap.set(user.display_name, m.id);
         }
-      }))
-        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
+      })).catch(error => logError(`Failed to update the streams messages. Error: ${error}`));
       // Deletes the streams if not found in the response
       const deleteStreams = [];
       streamEmbeds.forEach((val, key, map) => {
         if (map !== undefined && tempStreamMap.get(key) === undefined) {
+          log(`Delete streams from discord that are not in the response from Twitch`);
           channel.fetchMessage(val)
             .then((message) => {
               deleteStreams.push(message.delete());
-            });
+            }).catch(error => logError('Failed to fetch message to be deleted'));
         }
       });
       this.deleteRedundantMessages(deleteStreams);
       streamEmbeds = tempStreamMap;
+      log(`${constants.UPDATE_TWITCH_INTERVAL / 1000} seconds until next stream update...`);
       await sleep(constants.UPDATE_TWITCH_INTERVAL);
     }
   }
 
   static getUnknownMaps() {
+    log('Getting unknown maps from maps_name.json');
     try {
-      return new Set(JSON.parse(fs.readFileSync('maps_name.json', 'utf8')));
+      const mapSet = new Set(JSON.parse(fs.readFileSync('maps_name.json', 'utf8')));
+      log('Found unknown maps set successfully');
+      return mapSet;
     } catch (err) {
+      log('Could not find maps_name.json, using empty set..');
       return new Set();
     }
   }
 
   static async startGettingGames(client) {
+    log('Start getting games...');
     const maps = await Utils.getMaps();
     let unknownMaps = Utils.getUnknownMaps();
     let gameEmbeds = new Map();
@@ -85,36 +103,41 @@ class Utils {
     channel.bulkDelete(100, false);
     // noinspection InfiniteLoopJS
     while (true) {
+      log('Get/refresh ESOC games...');
       const newGames = new Map();
       const games = await ESO.getLobbies();
       await Promise.all(games.map(async (game) => {
+        log(`Creating embed for game "${game.name}"`);
         const embed = await ESO.createEmbed(game, maps, unknownMaps);
+        log('Successfully created an embed for ESOC game');
         // Update
         if ((gameEmbeds.get(game.id) !== undefined)) {
-          const message = await channel.fetchMessage(gameEmbeds.get(game.id));
+          log(`Update discord message for game ${game.id}`);
+          const message = await channel.fetchMessage(gameEmbeds.get(game.id)).catch(error => logError(`Failed to fetch message with game id ${game.id}. Error: ${error}`));
           newGames.set(game.id, message.id);
-          message.edit('', { embed })
-            .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
-          console.debug(`${new Date()} `, `${game.name} is updated`);
+          message.edit('', { embed }).catch(error => logError(`Failed to edit message with game id ${game.id}. Error: ${error}`));
+          log(`Game "${game.name}" was updated`);
         }
         // Add
         if (gameEmbeds.get(game.id) === undefined) {
-          const message = await channel.send({ embed });
-          console.debug(`${new Date()} `, `${game.name} is created`);
+          log(`Add discord message for new game with id ${game.id}`);
+          const message = await channel.send({ embed }).catch(error => logError(`Failed to send message embed for game "${game.id}"`));
+          log(`Game "${game.name}" was created`);
           newGames.set(game.id, message.id);
         }
-      }))
-        .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
+      })).catch(error => logError(`Failed in Promise.all trying to create discord message embeds for all games. Error: ${error}`));
       // Remove
       const deleteGames = [];
+      log('Remove old messages with games that are no longer hosted');
       gameEmbeds.forEach(async (val, key, map) => {
         if (map !== undefined && newGames.get(key) === undefined) {
-          const message = await channel.fetchMessage(val);
+          const message = await channel.fetchMessage(val).catch(error => logError(`Failed to fetch message with value ${val}. Error: ${error}`));
           deleteGames.push(message.delete());
         }
       });
       this.deleteRedundantMessages(deleteGames);
       gameEmbeds = newGames;
+      log(`Wait for ${constants.UPDATE_INTERVAL_ESOC / 1000} seconds before updating game list again...`);
       await sleep(constants.UPDATE_INTERVAL_ESOC);
     }
   }
@@ -148,9 +171,11 @@ class Utils {
     let maps = [];
 
     try {
+      log('Fetched maps from database...');
       [maps] = await con.execute(constants.MAPS_QUERY);
+      log('Successfully fetched maps from database');
     } catch (error) {
-      console.error('Failed to fetch maps from database: ', error);
+      logError(`Failed to fetch maps from database. Error: ${error}`);
     }
 
     // Turn map_name into mapName
@@ -170,10 +195,11 @@ class Utils {
   }
 
   static async ensureMutedRolePermissions(guild) {
+    log('Ensure that muted role permissions are correctly set...');
     const mutedRole = guild.roles.find('name', 'Muted');
 
     if (!mutedRole) {
-      return console.error(`No mutedRole exists in ${guild.name}, and failed to create one.`);
+      return logError(`No mutedRole exists in ${guild.name}, and failed to create one.`);
     }
 
     try {
@@ -184,11 +210,12 @@ class Utils {
         });
       }));
     } catch (error) {
-      return console.error(`Failed to set channel permissions of mutedRole in ${guild.name}. Error: ${error}`);
+      return logError(`Failed to set channel permissions of mutedRole in ${guild.name}. Error: ${error}`);
     }
   }
 
   static async createMutedRole(guild) {
+    log(`Create muted role in ${guild.name}`);
     await guild.createRole({
       name: 'Muted',
       color: '#FF0000',
@@ -209,21 +236,26 @@ class Utils {
   }
 
   static async unmuteUsers(guilds, mutedUsers) {
+    log('Make sure all users that should be unmuted have been unmuted...');
     await Promise.all(Object.entries(mutedUsers).map(async ([userId, user]) => {
       if (Date.now() > user.unmuteAt) {
         const guild = guilds.get(user.guildId);
         const mutedRole = guild.roles.find('name', 'Muted');
-        await guild.members.get(userId).removeRole(mutedRole).catch(error => console.error(`Failed to remove muted role from user. Error: ${error}`));
+        await guild.members.get(userId).removeRole(mutedRole).catch(error => logError(`Failed to remove muted role from user. Error: ${error}`));
         delete mutedUsers[userId];
       }
-    }));
-
+    })).catch(error => logError(`Failed to unmute users. Error: ${error}`));
+    log('Save users to mutedUsers.json...');
     Utils.writeJson(mutedUsers, path.join(__dirname, './data/mutedUsers.json'));
   }
 
   static writeJson(json, filePath) {
     // filePath: Absolute path to file, including filename
-    fs.writeFileSync(filePath, JSON.stringify(json, null, 2));
+    try {
+      fs.writeFileSync(filePath, JSON.stringify(json, null, 2));
+    } catch (error) {
+      logError(`Failed to write json. Error: ${error}`);
+    }
   }
 
   static readJson(filePath, fallback) {
