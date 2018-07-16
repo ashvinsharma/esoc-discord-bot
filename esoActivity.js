@@ -2,17 +2,22 @@ const request = require('request-promise');
 const fs = require('fs');
 const Discord = require('discord.js');
 const constants = require('./constants');
+const { log, logError } = require('./logger');
 
 const { escapeMarkdown } = Discord.Util;
 
 class EsoActivity {
   static async getLobbies() {
-    const req = await request(`${constants.ESOC}${constants.ESOC_LOBBIES_URI}`);
+    const url = `${constants.ESOC}${constants.ESOC_LOBBIES_URI}`;
+    log(`Fetching ESOC patch lobbies from ${url}...`);
+    const req = await request(url).catch(error => logError(`Failed to fetch lobbies from ${url}. Error: ${error}`));
     try {
-      return JSON.parse(req);
-    } catch (e) {
-      console.error(`${new Date()}: ${__filename}\n ${e}`);
-      console.error(req);
+      log('Parse lobbies..');
+      const lobbies = JSON.parse(req);
+      log('Successfully fetched and parsed ESOC patch lobbies');
+      return lobbies;
+    } catch (error) {
+      logError(`Found JSON from ${url} but failed to parse it. Invalid JSON. Error: ${error}. \n JSON received: ${req}`);
       return [];
     }
   }
@@ -42,8 +47,16 @@ class EsoActivity {
   }
 
   static getPatchIcon(patch) {
-    if (patch === 1) return `${constants.ESOC}${constants.ESOC_PATCH_ICON}`;
-    if (patch === 2) return `${constants.ESOC}${constants.TREATY_PATCH_ICON}`;
+    log('Get patch icon..');
+    if (patch === 1) {
+      log('Return patch icon for traditional EP');
+      return `${constants.ESOC}${constants.ESOC_PATCH_ICON}`;
+    }
+    if (patch === 2) {
+      log('Return patch icon for treaty patch');
+      return `${constants.ESOC}${constants.TREATY_PATCH_ICON}`;
+    }
+    logError(`Could not identify patch from value ${patch}.. Cannot pick a patch icon`);
     return null;
   }
 
@@ -75,6 +88,7 @@ class EsoActivity {
   }
 
   static getMap(map, patch) {
+    log(`Convert map name "${map}" if possible`);
     switch (map) {
       case 'Largerandommaps':
         if (this.isPatch(patch)) return 'Classic Maps';
@@ -97,31 +111,40 @@ class EsoActivity {
   }
 
   static async getMapIcon(map, scenario, maps, unknownMaps) {
-    if (scenario) return `${constants.ESOC}${constants.SCENARIO_IMAGE}`;
+    if (scenario) {
+      const mapIcon = `${constants.ESOC}${constants.SCENARIO_IMAGE}`;
+      log(`Game is scenario, get scenario image: ${mapIcon}`);
+      return mapIcon;
+    }
     const mapName = map.trim();
     let mapObject = maps[mapName];
     if (mapObject === undefined) {
       if (!unknownMaps.has(mapName)) {
+        log(`map "${mapName}" not found in maps_name.json`);
         try {
+          log(`Add "${mapName}" to maps_name.json`);
           unknownMaps.add(mapName);
-          fs.writeFile('maps_name.json', JSON.stringify([...unknownMaps], null, 2), (err) => {
-            if (err) {
-              console.error(`${new Date()}: ${__filename}\n ${err}`);
+          fs.writeFile('maps_name.json', JSON.stringify([...unknownMaps], null, 2), (error) => {
+            if (error) {
+              logError(`Failed to write maps_name.json with new map ${mapName}. Error: ${error}`);
+            } else {
+              log(`Added "${mapName}" to maps_name.json successfully`);
             }
           });
-        } catch (e) {
-          console.error(`${new Date()}: ${__filename}\n ${e}`);
+        } catch (error) {
+          logError(`Failed to add ${mapName} to maps_name.json. Error: ${error}`);
         }
       }
       mapObject = maps[mapName.slice(0, 20)];
       if (mapObject === undefined) {
         try {
+          log(`Try to find map image for map "${mapName}"...`);
           mapObject = Object.entries(maps)
             .find(map => map[1].mapName.toLowerCase()
               .includes(mapName.toLowerCase()) || mapName.toLowerCase()
               .includes(map[1].mapName.toLowerCase()))[1];
-        } catch (e) {
-          console.error(`${new Date()}: ${__filename}\n ${e}`);
+        } catch (error) {
+          logError(`Failed to find map image for map "${mapName}". Something had an unexpected format. Error: ${error}`);
           return `${constants.ESOC}${constants.UNKNOWN_MAP_IMAGE}`;
         }
       }
@@ -138,9 +161,13 @@ class EsoActivity {
       if (p === null) count += 1;
     });
     let map = this.getMap(game.map, game.patch);
-    if (map[0] === map[0].toLowerCase()) {
+    log(`Map name: ${map}`);
+    if (map && map[0] === map[0].toLowerCase()) {
       map = map[0].toUpperCase() + map.slice(1);
+      log(`Capitalize map name: "${map}"`);
     }
+    const thumbnailUrl = await this.getMapIcon(map, game.scenario, maps, unknownMaps);
+    const authorIconUrl = await this.getPatchIcon(game.patch);
     return {
       title: escapeMarkdown(game.name),
       url: this.getUserLink(game.players[0], game.patch),
@@ -151,14 +178,14 @@ class EsoActivity {
       //     'text': `Created At`
       // },
       thumbnail: {
-        url: await this.getMapIcon(map, game.scenario, maps, unknownMaps),
+        url: thumbnailUrl,
       },
       image: {
         url: '',
       },
       author: {
         name: this.getPatch(game.patch),
-        icon_url: await this.getPatchIcon(game.patch),
+        icon_url: authorIconUrl,
       },
       fields: [
         {

@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const { log, logError } = require('./logger');
 
 const con = mysql.createPool({
   host: process.env.DB_HOST,
@@ -8,12 +9,12 @@ const con = mysql.createPool({
 
 // Attempt to catch disconnects
 con.on('connection', (connection) => {
-  console.debug('DB Connection established');
+  log('Database Connection established');
   connection.on('error', (err) => {
-    console.error(`${new Date()} MySQL error  ${err.code}`);
+    logError(`Database error. MySQL error: ${err.code}`);
   });
   connection.on('close', (err) => {
-    console.error(`${new Date()} MySQL close ${err}`);
+    logError(`Database connection closed. ${err}`);
   });
 });
 

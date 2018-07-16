@@ -4,40 +4,63 @@ const Utils = require('./utils');
 const { prefix } = require('./config');
 const commands = require('./commands');
 const { mutedUsers } = require('./data');
+const { log, logError } = require('./logger');
 
-const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
+// const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
 
 client.on('ready', async () => {
+  log('Discord bot started');
   Utils.startGettingGames(client);
   Utils.startGettingStreams(client);
-  await Utils.ensureMutedRolesExists(client.guilds).catch(console.error);
-  await Utils.unmuteUsers(client.guilds, mutedUsers).catch(console.error);
+  await Utils.ensureMutedRolesExists(client.guilds).catch(logError);
+  await Utils.unmuteUsers(client.guilds, mutedUsers).catch(logError);
   // client.channels.get(generalChannel).bulkDelete(33);
 });
 
 client.on('guildMemberAdd', (member) => {
+  log(`Event: "guildMemberAdd". New member ${member} joined`);
   // temporarily disable this (too many messages)
-  /// const channel = client.channels.get(generalChannel);
+  // const channel = client.channels.get(generalChannel);
   // channel.send(Utils.getMessage(member));
 });
 
 client.on('message', (message) => {
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  log('Event: message');
+
+  if (!message.content.startsWith(prefix)) {
+    log(`Message does not start with prefix "${prefix}", ignoring message`);
+    return;
+  }
+
+  if (message.author.bot) {
+    log('Message comes from a bot, ignoring message');
+    return;
+  }
 
   const args = message.content.slice(prefix.length).split(/ +/);
   const command = commands[args[0].toLowerCase()];
 
-  if (!command) return;
+  if (!command) {
+    log(`Could not find command "${args[0].toLowerCase()}" to execute...`);
+    return;
+  }
 
   try {
+    log(`Execute command "${message.content}"`);
     command.execute(message, args.slice(1));
-  } catch (e) {
-    console.error(`${new Date()}: Failed to execute command "${command}". message: "${message.content}". Error: ${e}`);
+  } catch (error) {
+    logError(`Command "${args[0].toLowerCase()}" failed to execute. Original message: "${message.content}". Error: ${error}`);
     message.reply('Oops, something went wrong');
   }
 });
 
 client.login(process.env.DISCORD_TOKEN)
-  .then(() => console.debug(`${new Date()} `, 'logged in!'))
-  .catch(console.error);
+  .then(() => log('Bot logged in successfully'))
+  .catch((error) => {
+    if (!process.eventNames.DISCORD_TOKEN) {
+      return logError(`Failed to login. Are you sure you set the "DISCORD_TOKEN" environment variable? Error: ${error}`);
+    }
+
+    return logError(`Failed to login. Error: ${error}`);
+  });
