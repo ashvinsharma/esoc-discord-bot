@@ -26,15 +26,11 @@ client.on('guildMemberAdd', (member) => {
 });
 
 client.on('message', (message) => {
-  log('Event: message');
-
   if (!message.content.startsWith(prefix)) {
-    log(`Message does not start with prefix "${prefix}", ignoring message`);
     return;
   }
 
   if (message.author.bot) {
-    log('Message comes from a bot, ignoring message');
     return;
   }
 
