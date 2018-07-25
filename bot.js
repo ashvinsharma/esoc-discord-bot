@@ -15,7 +15,6 @@ client.on('ready', async () => {
   Utils.startGettingStreams(client);
   await Utils.ensureMutedRolesExists(client.guilds).catch(logError);
   await Utils.unmuteUsers(client.guilds, mutedUsers).catch(logError);
-  // client.channels.get(generalChannel).bulkDelete(33);
 });
 
 client.on('guildMemberAdd', (member) => {

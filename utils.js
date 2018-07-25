@@ -29,11 +29,11 @@ class Utils {
    * @return Prints streams on the live-channel
    */
   static async startGettingStreams(client) {
-    log('Start Getting Streams...')
+    log('Start Getting Streams...');
     let streamEmbeds = new Map();
     const channel = client.channels.get(liveChannel);
     log('Delete 100 last messages in stream channel...');
-    channel.bulkDelete(100, false)
+    channel.bulkDelete(100, true)
       .then(() => log('Delete successful'))
       .catch(error => logError(`Failed to delete messages. Error: ${error}`));
     // noinspection InfiniteLoopJS
