@@ -1,9 +1,6 @@
 const Discord = require('discord.js');
 const { mute, unmute } = require('../tasks');
-
-function mentionToUserId(mention) {
-  return mention.replace(/[<@!>]/g, '');
-}
+const { mentionToUserId } = require('./utils');
 
 function validate(message, userToMute, minutesMuted, reason) {
   if (!userToMute) {
@@ -31,11 +28,10 @@ function validate(message, userToMute, minutesMuted, reason) {
     return false;
   }
 
-  if (!reason) {
+  if (reason.length === 0) {
     message.author.send('You have to give a reason to mute someone');
     return false;
   }
-
   return true;
 }
 
@@ -45,7 +41,8 @@ module.exports = {
   execute: async (message, args) => {
     const userToMute = message.guild.members.get(mentionToUserId(args[0]));
     const minutesMuted = parseInt(args[1], 10);
-    const reason = args.slice(2).join(' ');
+    const reason = args.slice(2)
+      .join(' ');
     const moderator = message.author;
 
     if (!validate(message, userToMute, minutesMuted, reason)) {
