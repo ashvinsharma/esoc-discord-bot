@@ -1,11 +1,11 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const Discord = require('discord.js');
 const Utils = require('./utils');
 const { prefix } = require('./config');
 const commands = require('./commands');
 const { mutedUsers } = require('./data');
 const { log, logError } = require('./logger');
-
 // const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
 
