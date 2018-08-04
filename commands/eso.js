@@ -1,5 +1,5 @@
 const net = require('net');
-const { log, logError } = require('./../logger');
+const { logError } = require('./../logger');
 
 async function check(message) {
   const socket = new net.Socket();
@@ -18,7 +18,7 @@ async function check(message) {
 module.exports = {
   name: 'eso',
   description: 'Tells if ESO is down or not.',
-  async execute(message, args) {
+  async execute(message) {
     await check(message)
       .catch(e => console.error(`${new Date()}: ${__filename}\n ${e}`));
   },

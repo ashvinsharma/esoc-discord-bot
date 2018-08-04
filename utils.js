@@ -218,7 +218,7 @@ class Utils {
     log(`Create muted role in ${guild.name}`);
     await guild.createRole({
       name: 'Muted',
-      color: '#FF0000',
+      color: constants.RED,
       permissions: [],
     }).catch(error => console.error(`Failed to create mutedRole in ${guild.name}. Error: ${error}`));
 
