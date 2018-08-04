@@ -86,7 +86,7 @@ module.exports = {
     };
     const joinDate = new Date(player.user[0].dateJoined);
     const embed = {
-      title: `${(player.user[0].clanAbbr[0].trim() === '') ? '' : `[${player.user[0].clanAbbr[0]}] `}${escapeMarkdown(player.user[0].name)}`,
+      title: `${(player.user[0].clanAbbr[0].trim() === '') ? '' : `[${player.user[0].clanAbbr[0]}] `}${escapeMarkdown(player.user[0].name[0])}`,
       description: `${presence}${(player.user[0].clanName[0].trim() === '') ? '' : `\n**Clan**: *${player.user[0].clanName}*\n**Member since**: *${joinDate.toLocaleDateString('en-US', dateOptions)}*`}`,
       url: 'https://discordapp.com',
       color,
