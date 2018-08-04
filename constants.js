@@ -2,7 +2,6 @@ const GOLD = 0xffa500;
 const GOLD_COUNT = 25;
 const GRAY = 0x4f545c;
 const GREEN = 3842351; // decimal representation of hexa color
-// TODO: change player name
 const ESO_QUERY = 'http://www.agecommunity.com/query/query.aspx?g=age3y&name=arg1&md=user';
 const ESOC = 'http://eso-community.net';
 const ESOC_LOBBIES_URI = '/assets/patch/api/lobbies.json';
