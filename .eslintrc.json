@@ -1,5 +1,13 @@
 {
   "rules": {
+    "max-len": [
+      "off",
+      {
+        "ignoreComments": true,
+        "code": 100,
+        "ignoreStrings": true
+      }
+    ],
     "no-console": 0,
     "no-unused-vars": 1,
     "no-await-in-loop": [
