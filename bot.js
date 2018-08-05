@@ -1,5 +1,6 @@
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv')
+  .config({ path: path.join(__dirname, '.env') });
 const Discord = require('discord.js');
 const Utils = require('./utils');
 const { prefix } = require('./config');
@@ -8,13 +9,17 @@ const { mutedUsers } = require('./data');
 const { log, logError } = require('./logger');
 // const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
+let avatar = {};
 
 client.on('ready', async () => {
   log('Discord bot started');
+  avatar = await Utils.fetchAvatarsFromDb();
   Utils.startGettingGames(client);
   Utils.startGettingStreams(client);
-  await Utils.ensureMutedRolesExists(client.guilds).catch(logError);
-  await Utils.unmuteUsers(client.guilds, mutedUsers).catch(logError);
+  await Utils.ensureMutedRolesExists(client.guilds)
+    .catch(logError);
+  await Utils.unmuteUsers(client.guilds, mutedUsers)
+    .catch(logError);
 });
 
 client.on('guildMemberAdd', (member) => {
@@ -27,7 +32,8 @@ client.on('guildMemberAdd', (member) => {
 client.on('message', (message) => {
   if (!message.content.startsWith(prefix)) return;
   if (message.author.bot) return;
-  const args = message.content.slice(prefix.length).split(/ +/);
+  const args = message.content.slice(prefix.length)
+    .split(/ +/);
   const command = commands[args[0].toLowerCase()];
   if (!command) {
     log(`Could not find command "${args[0].toLowerCase()}" to execute...`);
@@ -35,6 +41,10 @@ client.on('message', (message) => {
   }
   try {
     log(`Execute command "${message.content}"`);
+    if (message.content.split(' ')[0].slice(1)
+      .toLowerCase() === 'player') {
+      args.push(avatar);
+    }
     command.execute(message, args.slice(1));
   } catch (error) {
     logError(`Command "${args[0].toLowerCase()}" failed to execute. Original message: "${message.content}". Error: ${error}`);
