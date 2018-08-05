@@ -20,6 +20,13 @@ class Utils {
     }
   }
 
+  static arrayToObject(array, keyField) {
+    return array.reduce((obj, item) => {
+      obj[item[keyField]] = item;
+      return obj;
+    }, {});
+  }
+
   /**
    *  Gets data from Twitch helix API and posts in the channel.
    *  All the streams are stored in map ({streamer_name: message_id}).
@@ -63,7 +70,8 @@ class Utils {
           log(`"${user.display_name}" stream added successfully`);
           tempStreamMap.set(user.display_name, m.id);
         }
-      })).catch(error => logError(`Failed to update the streams messages. Error: ${error}`));
+      }))
+        .catch(error => logError(`Failed to update the streams messages. Error: ${error}`));
       // Deletes the streams if not found in the response
       const deleteStreams = [];
       streamEmbeds.forEach((val, key, map) => {
@@ -72,7 +80,8 @@ class Utils {
           channel.fetchMessage(val)
             .then((message) => {
               deleteStreams.push(message.delete());
-            }).catch(error => logError('Failed to fetch message to be deleted'));
+            })
+            .catch(error => logError('Failed to fetch message to be deleted'));
         }
       });
       this.deleteRedundantMessages(deleteStreams);
@@ -113,25 +122,30 @@ class Utils {
         // Update
         if ((gameEmbeds.get(game.id) !== undefined)) {
           log(`Update discord message for game ${game.id}`);
-          const message = await channel.fetchMessage(gameEmbeds.get(game.id)).catch(error => logError(`Failed to fetch message with game id ${game.id}. Error: ${error}`));
+          const message = await channel.fetchMessage(gameEmbeds.get(game.id))
+            .catch(error => logError(`Failed to fetch message with game id ${game.id}. Error: ${error}`));
           newGames.set(game.id, message.id);
-          message.edit('', { embed }).catch(error => logError(`Failed to edit message with game id ${game.id}. Error: ${error}`));
+          message.edit('', { embed })
+            .catch(error => logError(`Failed to edit message with game id ${game.id}. Error: ${error}`));
           log(`Game "${game.name}" was updated`);
         }
         // Add
         if (gameEmbeds.get(game.id) === undefined) {
           log(`Add discord message for new game with id ${game.id}`);
-          const message = await channel.send({ embed }).catch(error => logError(`Failed to send message embed for game "${game.id}"`));
+          const message = await channel.send({ embed })
+            .catch(error => logError(`Failed to send message embed for game "${game.id}"`));
           log(`Game "${game.name}" was created`);
           newGames.set(game.id, message.id);
         }
-      })).catch(error => logError(`Failed in Promise.all trying to create discord message embeds for all games. Error: ${error}`));
+      }))
+        .catch(error => logError(`Failed in Promise.all trying to create discord message embeds for all games. Error: ${error}`));
       // Remove
       const deleteGames = [];
       log('Remove old messages with games that are no longer hosted');
       gameEmbeds.forEach(async (val, key, map) => {
         if (map !== undefined && newGames.get(key) === undefined) {
-          const message = await channel.fetchMessage(val).catch(error => logError(`Failed to fetch message with value ${val}. Error: ${error}`));
+          const message = await channel.fetchMessage(val)
+            .catch(error => logError(`Failed to fetch message with value ${val}. Error: ${error}`));
           deleteGames.push(message.delete());
         }
       });
@@ -154,6 +168,7 @@ class Utils {
     return lastRandom;
   }
 
+  // noinspection JSUnusedGlobalSymbols
   static getMessage(member) {
     const templates = [
       `Wololo! ${member} has been converted to ESOC`,
@@ -167,11 +182,27 @@ class Utils {
     return templates[idx];
   }
 
+  static async fetchAvatarsFromDb() {
+    let avatar = [];
+    try {
+      log('Fetching avatars from database...');
+      [avatar] = await con.execute(constants.AVATAR_QUERY);
+      log('Successfully fetched avatars from database');
+    } catch (error) {
+      logError(`Failed to fetch avatars from database. Error: ${error}`);
+    }
+    avatar = avatar.map(({ image_name, ...others }) => ({
+      ...others,
+      imageName: image_name
+    }));
+    return this.arrayToObject(avatar, 'hash');
+  }
+
   static async fetchMapsFromDb() {
     let maps = [];
 
     try {
-      log('Fetched maps from database...');
+      log('Fetching maps from database...');
       [maps] = await con.execute(constants.MAPS_QUERY);
       log('Successfully fetched maps from database');
     } catch (error) {
@@ -220,7 +251,8 @@ class Utils {
       name: 'Muted',
       color: constants.RED,
       permissions: [],
-    }).catch(error => console.error(`Failed to create mutedRole in ${guild.name}. Error: ${error}`));
+    })
+      .catch(error => console.error(`Failed to create mutedRole in ${guild.name}. Error: ${error}`));
 
     await Utils.ensureMutedRolePermissions(guild);
   }
@@ -232,19 +264,24 @@ class Utils {
       if (!mutedRole) {
         await Utils.createMutedRole(guild);
       }
-    })).catch(console.error);
+    }))
+      .catch(console.error);
   }
 
   static async unmuteUsers(guilds, mutedUsers) {
     log('Make sure all users that should be unmuted have been unmuted...');
-    await Promise.all(Object.entries(mutedUsers).map(async ([userId, user]) => {
-      if (Date.now() > user.unmuteAt) {
-        const guild = guilds.get(user.guildId);
-        const mutedRole = guild.roles.find('name', 'Muted');
-        await guild.members.get(userId).removeRole(mutedRole).catch(error => logError(`Failed to remove muted role from user. Error: ${error}`));
-        delete mutedUsers[userId];
-      }
-    })).catch(error => logError(`Failed to unmute users. Error: ${error}`));
+    await Promise.all(Object.entries(mutedUsers)
+      .map(async ([userId, user]) => {
+        if (Date.now() > user.unmuteAt) {
+          const guild = guilds.get(user.guildId);
+          const mutedRole = guild.roles.find('name', 'Muted');
+          await guild.members.get(userId)
+            .removeRole(mutedRole)
+            .catch(error => logError(`Failed to remove muted role from user. Error: ${error}`));
+          delete mutedUsers[userId];
+        }
+      }))
+      .catch(error => logError(`Failed to unmute users. Error: ${error}`));
     log('Save users to mutedUsers.json...');
     Utils.writeJson(mutedUsers, path.join(__dirname, './data/mutedUsers.json'));
   }
