@@ -1,7 +1,15 @@
 const request = require('request-promise');
 const Discord = require('discord.js');
 const parseString = require('xml2js').parseString;
-const { ESO_QUERY, GREEN, RED } = require('./../constants');
+const utf8 = require('utf8');
+const {
+  DEFAULT_AVATAR,
+  ESOC,
+  ESOC_AVATARS,
+  ESO_QUERY,
+  GREEN,
+  RED,
+} = require('./../constants');
 const { log, logError } = require('./../logger');
 
 const { escapeMarkdown } = Discord.Util;
@@ -46,14 +54,20 @@ module.exports = {
   name: 'player',
   description: 'Returns player stats',
   async execute(message, args) {
-    const queryURL = ESO_QUERY.replace('arg1', args[0]);
-    log(`Looking for player: '${args[0]}' in ${queryURL}`);
+    if (typeof args[0] !== 'string') {
+      message.channel.send('Please enter an ESO account to initiate search');
+      return;
+    }
+    const avatar = args[1];
+    const playerName = utf8.encode(args[0]);
+    const queryURL = ESO_QUERY.replace('arg1', playerName);
+    log(`Looking for player: '${playerName}' in ${queryURL}`);
     let player = await request.get(queryURL);
     parseString(player, (err, result) => {
       player = result;
     });
     if (player.error !== undefined) {
-      logError(`Player: ${args[0]} is not found on ESO servers`);
+      logError(`Player: ${args[0]} is not found on ESO servers\n${player.error}`);
       message.channel.send('Please enter a valid ESO Name');
       return;
     }
@@ -84,11 +98,20 @@ module.exports = {
       month: 'short',
       day: 'numeric',
     };
+    const avatarId = (player.user[0].avatarId[0] === '') ? '0c182d86-f9e0-4208-8074-0ce427e40a84' : player.user[0].avatarId[0];
+    let url;
+    try {
+      url = `${ESOC}${ESOC_AVATARS}/${avatar[avatarId].imageName}`;
+    } catch (error) {
+      url = `${ESOC}${ESOC_AVATARS}/${avatar[DEFAULT_AVATAR].imageName}`;
+    }
     const joinDate = new Date(player.user[0].dateJoined);
     const embed = {
       title: `${(player.user[0].clanAbbr[0].trim() === '') ? '' : `[${player.user[0].clanAbbr[0]}] `}${escapeMarkdown(player.user[0].name[0])}`,
       description: `${presence}${(player.user[0].clanName[0].trim() === '') ? '' : `\n**Clan**: *${player.user[0].clanName}*\n**Member since**: *${joinDate.toLocaleDateString('en-US', dateOptions)}*`}`,
-      url: 'https://discordapp.com',
+      thumbnail: {
+        url,
+      },
       color,
       timestamp: `${player.LastUpdated}`,
       footer: {
@@ -96,7 +119,7 @@ module.exports = {
       },
       author: {
         name: 'ESO Player Info',
-        icon_url: 'https://cdn.discordapp.com/embed/avatars/0.png',
+        icon_url: 'https://cdn.discordapp.com/attachments/264200488524840980/475604121051987968/ECB7F02F8BB013880A99FBCD398CFA93D9CB31C3.png',
       },
       fields: generateFields(rating),
     };
