@@ -4,6 +4,7 @@ const GOLD = 0xffa500;
 const GOLD_COUNT = 25;
 const GRAY = 0x4f545c;
 const GREEN = 3842351; // decimal representation of hexa color
+const ESO_POP = 'http://agecommunity.com/_server_status_/';
 const ESO_QUERY = 'http://www.agecommunity.com/query/query.aspx?g=age3y&name=arg1&md=user';
 const ESOC = 'http://eso-community.net';
 const ESOC_AVATARS = '/images/avatars/aoe3';
@@ -83,6 +84,7 @@ const UNKNOWN_MAP_IMAGE = `${ESOC_IMAGES}/maps/unknown.png`;
 const UPDATE_TWITCH_INTERVAL = 60000; // milli seconds
 const UPDATE_INTERVAL_ESOC = 15000; // milli seconds
 const XP_MOD_EMBED_COLOR = 0xc27c0e;
+const YELLOW = 15204220;
 
 module.exports = {
   AVATAR_QUERY,
@@ -91,6 +93,10 @@ module.exports = {
   GOLD_COUNT,
   GRAY,
   GREEN,
+<<<<<<< HEAD
+=======
+  ESO_POP,
+>>>>>>> master
   ESO_QUERY,
   ESOC,
   ESOC_AVATARS,
@@ -116,4 +122,5 @@ module.exports = {
   UPDATE_INTERVAL_ESOC,
   UNKNOWN_MAP_IMAGE,
   XP_MOD_EMBED_COLOR,
+  YELLOW,
 };
