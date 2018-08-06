@@ -1,5 +1,6 @@
 const requireDir = require('require-dir');
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * This file is used for including all the commands used by users.
  * The real operation may be written in ./../data folder
@@ -7,4 +8,5 @@ const requireDir = require('require-dir');
  */
 module.exports = requireDir('./', {
   filter: fullPath => fullPath.endsWith('.js'),
+  mapKey: (val, name) => name.toLowerCase(),
 });

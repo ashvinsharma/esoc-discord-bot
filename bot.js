@@ -36,7 +36,7 @@ client.on('message', (message) => {
     .split(/ +/);
   const command = commands[args[0].toLowerCase()];
   if (!command) {
-    log(`Could not find command "${args[0].toLowerCase()}" to execute...`);
+    logError(`Could not find command "${args[0].toLowerCase()}" to execute...`);
     return;
   }
   try {
