@@ -1,6 +1,6 @@
 {
   "name": "discord.js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Bot in ESOC discord which parses twitch streams, ESOC lobbies and interacts with users",
   "main": "bot.js",
   "engines": {
@@ -18,6 +18,7 @@
   "dependencies": {
     "await-sleep": "0.0.1",
     "bufferutil": "^3.0.3",
+    "cheerio": "^1.0.0-rc.2",
     "date-fns": "^1.29.0",
     "discord.js": "^11.3.2",
     "dotenv": "^6.0.0",

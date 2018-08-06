@@ -1,0 +1,33 @@
+/* eslint-disable */
+const request = require('request-promise');
+const cheerio = require('cheerio');
+const { ESO_POP, YELLOW } = require('./../constants');
+
+module.exports = {
+  name: 'eso-pop',
+  description: 'Returns population of eso.',
+  async execute(message) {
+    // noinspection JSUnusedGlobalSymbols
+    const options = {
+      uri: ESO_POP,
+      transform: body => cheerio.load(body),
+    };
+
+    const $ = await request(options);
+    const selector = $('#TotalUsersDetailsView tr td');
+    const numbers = [];
+    const emojis = message.client.emojis;
+    for (let i = 1; i < 6; i += 2) numbers.push(selector[i].children[0].data);
+    const description = `${emojis.find('name', 'AoE')} **Vanilla:** ${numbers[0]}\n
+    ${emojis.find('name', 'TWC')} **TWC:** ${numbers[1]}\n
+    ${emojis.find('name', 'TAD')} **TAD**: ${numbers[2]}`;
+    const embed = {
+      title: `${emojis.find('name', 'pop')} ESO Population Statistics`,
+      description,
+      url: ESO_POP,
+      color: YELLOW,
+      fields: [],
+    };
+    message.channel.send({ embed });
+  },
+};

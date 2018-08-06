@@ -52,7 +52,7 @@ function generateFields(rating) {
 
 module.exports = {
   name: 'player',
-  description: 'Returns player stats',
+  description: 'Returns ESO stats of player',
   async execute(message, args) {
     if (typeof args[0] !== 'string') {
       message.channel.send('Please enter an ESO account to initiate search');
