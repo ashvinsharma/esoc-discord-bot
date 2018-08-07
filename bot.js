@@ -13,6 +13,7 @@ let avatar = {};
 
 client.on('ready', async () => {
   log('Discord bot started');
+  client.user.setActivity('Type !help for a list of the commands.').catch(logError);
   avatar = await Utils.fetchAvatarsFromDb();
   Utils.startGettingGames(client);
   Utils.startGettingStreams(client);
