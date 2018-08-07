@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 const { ESO_POP, YELLOW } = require('./../constants');
 
 module.exports = {
-  name: 'eso-pop',
+  name: 'esopop',
   description: 'Returns population of eso.',
   async execute(message) {
     // noinspection JSUnusedGlobalSymbols

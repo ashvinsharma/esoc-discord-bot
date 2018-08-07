@@ -5,6 +5,7 @@ const path = require('path');
 const con = require('./db');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
+const Discord = require('discord.js');
 const constants = require('./constants');
 const { log, logError } = require('./logger');
 const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
@@ -307,6 +308,20 @@ class Utils {
       throw new Error(`Failed to parse/read json file, error: ${error}`);
     }
   }
+
+  static getCommands() {
+    let commands = new Discord.Collection();
+    const commandObject = require('./commands/');
+
+    Object.entries(commandObject).forEach(
+      ([key, value]) =>
+        commands.set(key, value)
+    );
+
+    return commands;
+
+  }
+
 }
 
 module.exports = Utils;
