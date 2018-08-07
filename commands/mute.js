@@ -37,7 +37,8 @@ function validate(message, userToMute, minutesMuted, reason) {
 
 module.exports = {
   name: 'mute',
-  description: '"!mute [@username] [minutes] [reason]" will mute "username" for [minutes] minutes',
+  description: 'Mute an user for a given time.',
+  usage: '[@username] [minutes] [reason]',
   execute: async (message, args) => {
     const userToMute = message.guild.members.get(mentionToUserId(args[0]));
     const minutesMuted = parseInt(args[1], 10);

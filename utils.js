@@ -5,6 +5,7 @@ const path = require('path');
 const con = require('./db');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
+const Discord = require('discord.js');
 const constants = require('./constants');
 const { log, logError } = require('./logger');
 const liveChannel = process.env.DISCORD_CHANNEL_ID_TWITCH;
@@ -307,6 +308,21 @@ class Utils {
       throw new Error(`Failed to parse/read json file, error: ${error}`);
     }
   }
+
+  static getCommands(){ /*That's needed for help command. Could be reused in bot.js for handling commands even if we aren't in love of the way it's working.*/
+      let commands = new Discord.Collection();
+      const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('js'));
+
+      for(const file of commandFiles){
+        const command = require(`./commands/${file}`);
+
+        if(command.name)
+        commands.set(command.name, command)
+      }
+      return commands;
+
+  }
+
 }
 
 module.exports = Utils;

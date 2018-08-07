@@ -1,4 +1,5 @@
 const {prefix} = require('../config');
+const Utils = require('../utils');
 
 module.exports = {
   name: 'help',
@@ -7,7 +8,7 @@ module.exports = {
   usage: '[command name]',
   execute (message, args) {
     const data = [];
-    const {commands} = message.client;
+    const commands = Utils.getCommands();
 
     if (!args.length) {
       data.push('Here\'s a list of all my commands:');
