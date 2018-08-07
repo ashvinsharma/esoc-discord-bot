@@ -309,17 +309,16 @@ class Utils {
     }
   }
 
-  static getCommands(){ /*That's needed for help command. Could be reused in bot.js for handling commands even if we aren't in love of the way it's working.*/
-      let commands = new Discord.Collection();
-      const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('js'));
+  static getCommands() {
+    let commands = new Discord.Collection();
+    const commandObject = require('./commands/');
 
-      for(const file of commandFiles){
-        const command = require(`./commands/${file}`);
+    Object.entries(commandObject).forEach(
+      ([key, value]) =>
+        commands.set(key, value)
+    );
 
-        if(command.name)
-        commands.set(command.name, command)
-      }
-      return commands;
+    return commands;
 
   }
 

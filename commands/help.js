@@ -1,4 +1,4 @@
-const {prefix} = require('../config');
+const { prefix } = require('../config');
 const Utils = require('../utils');
 
 module.exports = {
@@ -6,7 +6,7 @@ module.exports = {
   description: 'List all of my commands or info about a specific command.',
   aliases: ['commands'],
   usage: '[command name]',
-  execute (message, args) {
+  execute(message, args) {
     const data = [];
     const commands = Utils.getCommands();
 
@@ -15,7 +15,7 @@ module.exports = {
       data.push(commands.map(command => command.name).join(', '));
       data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
 
-      return message.author.send(data, {split: true})
+      return message.author.send(data, { split: true })
         .then(() => {
           if (message.channel.type === 'dm') return;
           message.reply('I\'ve sent you a DM with all my commands!');
@@ -39,7 +39,7 @@ module.exports = {
     if (command.description) data.push(`**Description:** ${command.description}`);
     if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
 
-    message.channel.send(data, {split: true});
+    message.channel.send(data, { split: true });
 
   }
 };
