@@ -1,0 +1,3 @@
+git remote add heroku https://git.heroku.com/esoc-bot.git
+
+git push -f heroku master
