@@ -1,3 +1,13 @@
-git remote add heroku https://git.heroku.com/esoc-bot.git
-
-git push -f heroku master
+---
+deploy_production:
+  environment:
+    name: production
+  script:
+    - "git remote add heroku https://git.heroku.com/esoc-bot.git"
+    - "git push heroku HEAD:master"
+    - "echo \"Deployed to server\""
+  stage: deploy
+init:
+  script:
+    - "npm install"
+  stage: init
