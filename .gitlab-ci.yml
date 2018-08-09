@@ -17,3 +17,4 @@ deploy:
   script:
    - git remote add heroku https://git.heroku.com/esoc-bot.git
    - git push heroku HEAD:master
+   - dpl --provider=heroku --app=node-heroku-dpl --api-key=$HEROKU_API_KEY
