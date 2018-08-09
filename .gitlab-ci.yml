@@ -1,4 +1,4 @@
-image: node:latest
+image: node:8.11.3
 
 stages:
   - production
@@ -13,4 +13,4 @@ production:
     - gem install dpl
     - dpl --provider=heroku --app=node-heroku-dpl --api-key=$HEROKU_API_KEY
   only:
-- master
+    - master
