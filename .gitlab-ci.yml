@@ -1,16 +1,19 @@
 image: node:8.11.3
 
-stages:
-  - production
+cache:
+  paths:
+   - node_modules/
 
-production:
-  type: deploy
-  stage: production
-  image: ruby:latest
+before_script:
+  - npm install --quiet
+
+test:
+  stage: test
   script:
-    - apt-get update -qy
-    - apt-get install -y ruby-dev
-    - gem install dpl
-    - dpl --provider=heroku --app=node-heroku-dpl --api-key=$HEROKU_API_KEY
-  only:
-    - master
+   - npm start
+
+deploy:
+  stage: deploy
+  script:
+   - git remote add heroku https://git.heroku.com/esoc-bot.git
+   - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/esoc-bot.git HEAD
