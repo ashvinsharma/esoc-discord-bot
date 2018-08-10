@@ -59,9 +59,16 @@ client.on('messageDelete', async (message) => {
   const modLogChannel = message.guild.channels.find('name', 'mod_log');
   const author = message.author;
   if (message.channel.name === 'live-streams' || message.channel.name === 'eso-ep-activity') return;
-  let executor = await message.guild.fetchAuditLogs({ type: 'MESSAGE_DELETE' })
+  const auditEntry = await message.guild.fetchAuditLogs({ type: 'MESSAGE_DELETE' })
     .then(audit => audit.entries.first());
-  executor = executor.executor;
+  let executor;
+  if (auditEntry.extra.channel.id === message.channel.id
+    && auditEntry.target.id === message.author.id
+    && auditEntry.createdTimestamp > (Date.now() - 5000)) {
+    executor = auditEntry.executor;
+  } else {
+    executor = message.author;
+  }
   if (modLogChannel) {
     const embed = {
       description: `**Message sent by ${author} deleted in ${message.channel}**\n`
@@ -73,7 +80,7 @@ client.on('messageDelete', async (message) => {
       },
       author: {
         name: `${executor.username}#${executor.discriminator}`,
-        icon_url: executor.defaultAvatarURL,
+        icon_url: executor.displayAvatarURL,
       },
       fields: [],
     };
@@ -84,7 +91,8 @@ client.on('messageDelete', async (message) => {
 client.on('messageUpdate', (oldM, newM) => {
   if (oldM.channel.name === 'live-streams'
     || oldM.channel.name === 'eso-ep-activity'
-    || newM.content === '') {
+    // || newM.content === ''
+    || oldM.content === newM.content) {
     return;
   }
   const modLogChannel = oldM.guild.channels.find('name', 'mod_log');
@@ -98,7 +106,7 @@ client.on('messageUpdate', (oldM, newM) => {
     },
     author: {
       name: `${author.username}#${author.discriminator}`,
-      icon_url: author.defaultAvatarURL,
+      icon_url: author.displayAvatarURL,
     },
     fields: [
       {

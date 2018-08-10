@@ -1,14 +1,29 @@
 const { DARK_ORANGE } = require('./../constants');
+const Utils = require('./../utils');
+const { prefix } = require('./../config');
+
+const name = 'clean';
 
 function validate(message, args) {
   if (args.length !== 1) {
     const string = (args.length > 1) ? 'Just 1 argument is required!' : 'This command requires 1 argument';
-    message.channel.send(`${string}\nTry: !clean [number]`);
+    message.channel.send(`${string}\nTry: ${prefix}help ${name}`);
     return false;
   }
 
-  const messagesNumber = parseInt(args[0], 10);
-  if (!Number.isInteger(messagesNumber) || messagesNumber === 0) {
+  if (!Utils.isOnlyDigits(args[0])) {
+    message.channel.send('Argument should be a positive integer(max 99).');
+    return false;
+  }
+
+  // Removing leading zeroes if any
+  let messagesNumber = args[0];
+  while (messagesNumber.startsWith('0')) {
+    messagesNumber = messagesNumber.slice(1);
+  }
+
+  messagesNumber = Number(messagesNumber);
+  if (!Number.isInteger(messagesNumber) || messagesNumber === 0 || messagesNumber > 99) {
     message.channel.send('Argument should be a positive integer(max 99).');
     return false;
   }
@@ -21,14 +36,15 @@ function validate(message, args) {
 }
 
 module.exports = {
-  name: 'clean',
+  name,
   description: 'Cleans the [number] of messages from the given channel',
-  usage: '[number: 1 - 99]`',
+  usage: '[number: 1 - 99]',
+
   execute: async (message, args) => {
     if (!validate(message, args)) return;
     const deletedMessages = Array.from(await message.channel.bulkDelete(parseInt(args[0], 10) + 1, true), ([k, v]) => v);
     const messageWord = (parseInt(args[0], 10) === 1) ? 'message was' : 'messages were';
-    message.channel.send(`${args[0]} ${messageWord} deleted from here!`);
+    message.channel.send(`${Number(args[0])} ${messageWord} deleted from here!`);
     const modLogChannel = message.guild.channels.find('name', 'mod_log');
     let messages = '';
     deletedMessages.shift();
@@ -48,7 +64,7 @@ module.exports = {
         },
         author: {
           name: `${author.username}#${author.discriminator}`,
-          icon_url: author.defaultAvatarURL,
+          icon_url: author.displayAvatarURL,
         },
         fields: [],
       };
