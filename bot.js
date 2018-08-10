@@ -7,13 +7,15 @@ const { prefix } = require('./config');
 const commands = require('./commands');
 const { mutedUsers } = require('./data');
 const { log, logError } = require('./logger');
+const { DARK_ORANGE } = require('./constants');
 // const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
 let avatar = {};
 
 client.on('ready', async () => {
   log('Discord bot started');
-  client.user.setActivity('Type !help for a list of the commands.').catch(logError);
+  client.user.setActivity('Type !help for a list of the commands.')
+    .catch(logError);
   avatar = await Utils.fetchAvatarsFromDb();
   Utils.startGettingGames(client);
   Utils.startGettingStreams(client);
@@ -50,6 +52,32 @@ client.on('message', (message) => {
   } catch (error) {
     logError(`Command "${args[0].toLowerCase()}" failed to execute. Original message: "${message.content}". Error: ${error}`);
     message.reply('Oops, something went wrong');
+  }
+});
+
+client.on('messageDelete', async (message) => {
+  const modLogChannel = message.guild.channels.find('name', 'mod_log');
+  const author = message.author;
+  if (message.channel.name === 'live-streams' || message.channel.name === 'eso-ep-activity') return;
+  let executor = await message.guild.fetchAuditLogs({ type: 'MESSAGE_DELETE' })
+    .then(audit => audit.entries.first());
+  executor = executor.executor;
+  if (modLogChannel) {
+    const embed = {
+      description: `**Message sent by ${author} deleted in ${message.channel}**\n`
+      + `${message.content}`,
+      color: DARK_ORANGE,
+      timestamp: new Date().toISOString(),
+      footer: {
+        text: `Executor ID: ${executor.id}`,
+      },
+      author: {
+        name: `${executor.username}#${executor.discriminator}`,
+        icon_url: executor.avatarURL,
+      },
+      fields: [],
+    };
+    modLogChannel.send({ embed });
   }
 });
 
