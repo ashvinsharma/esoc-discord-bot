@@ -48,7 +48,7 @@ module.exports = {
         },
         author: {
           name: `${author.username}#${author.discriminator}`,
-          icon_url: author.avatarURL,
+          icon_url: author.defaultAvatarURL,
         },
         fields: [],
       };
