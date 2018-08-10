@@ -1,4 +1,5 @@
 const AVATAR_QUERY = 'SELECT hash, image_name FROM esoc.eso_avatar';
+const DARK_ORANGE = 0xEE7600;
 const DEFAULT_AVATAR = '0c182d86-f9e0-4208-8074-0ce427e40a84';
 const GOLD = 0xffa500;
 const GOLD_COUNT = 25;
@@ -64,6 +65,7 @@ const MAPS = [
 const MAPS_QUERY = 'SELECT a.alias_id, a.name AS map_name, m.*, p.username FROM esoc.maps_alias a '
   + 'INNER JOIN esoc.maps m ON m.ID = a.alias_id '
   + 'LEFT JOIN phpBB.p_users p ON p.user_id = m.Author';
+const ORANGE = 0xFFA500;
 const RED = 0xB22222;
 const SCENARIO_IMAGE = `${ESOC_IMAGES}/maps/scenario.png`;
 const TREATY_PATCH_ICON = `${ESOC_IMAGES}/patch-treaty-icon.png`;
@@ -88,6 +90,7 @@ const YELLOW = 15204220;
 
 module.exports = {
   AVATAR_QUERY,
+  DARK_ORANGE,
   DEFAULT_AVATAR,
   GOLD,
   GOLD_COUNT,
@@ -105,6 +108,7 @@ module.exports = {
   ESOC_SUPREMACY_STANDARD_LADDER,
   MAPS,
   MAPS_QUERY,
+  ORANGE,
   RED,
   SCENARIO_IMAGE,
   TREATY_PATCH_ICON,

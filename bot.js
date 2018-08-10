@@ -7,6 +7,7 @@ const { prefix } = require('./config');
 const commands = require('./commands');
 const { mutedUsers } = require('./data');
 const { log, logError } = require('./logger');
+const { DARK_ORANGE } = require('./constants');
 // const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
 let avatar = {};
@@ -57,7 +58,7 @@ client.on('message', (message) => {
 client.on('messageDelete', async (message) => {
   const modLogChannel = message.guild.channels.find('name', 'mod_log');
   const author = message.author;
-  // TODO: if bot deletes something ignore
+  if (message.channel.name === 'live-streams' || message.channel.name === 'eso-ep-activity') return;
   let executor = await message.guild.fetchAuditLogs({ type: 'MESSAGE_DELETE' })
     .then(audit => audit.entries.first());
   executor = executor.executor;
@@ -65,7 +66,7 @@ client.on('messageDelete', async (message) => {
     const embed = {
       description: `**Message sent by ${author} deleted in ${message.channel}**\n`
       + `${message.content}`,
-      color: 11468156,
+      color: DARK_ORANGE,
       timestamp: new Date().toISOString(),
       footer: {
         text: `Executor ID: ${executor.id}`,
