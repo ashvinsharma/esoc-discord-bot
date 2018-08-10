@@ -2,6 +2,5 @@
 node_modules/
 user.json
 maps_name.json
-Procfile
 .env
 data/*.json
