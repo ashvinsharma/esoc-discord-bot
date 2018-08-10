@@ -1,9 +1,10 @@
 const AVATAR_QUERY = 'SELECT hash, image_name FROM esoc.eso_avatar';
-const DARK_ORANGE = 0xEE7600;
+const BLUE = 0x117EA6;
+const DARK_ORANGE = 0xFF470F;
 const DEFAULT_AVATAR = '0c182d86-f9e0-4208-8074-0ce427e40a84';
-const GOLD = 0xffa500;
+const GOLD = 0xffA500;
 const GOLD_COUNT = 25;
-const GRAY = 0x4f545c;
+const GRAY = 0x4F545C;
 const GREEN = 3842351; // decimal representation of hexa color
 const ESO_POP = 'http://agecommunity.com/_server_status_/';
 const ESO_QUERY = 'http://www.agecommunity.com/query/query.aspx?g=age3y&name=arg1&md=user';
@@ -90,6 +91,7 @@ const YELLOW = 15204220;
 
 module.exports = {
   AVATAR_QUERY,
+  BLUE,
   DARK_ORANGE,
   DEFAULT_AVATAR,
   GOLD,

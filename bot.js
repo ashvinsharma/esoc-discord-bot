@@ -7,7 +7,7 @@ const { prefix } = require('./config');
 const commands = require('./commands');
 const { mutedUsers } = require('./data');
 const { log, logError } = require('./logger');
-const { DARK_ORANGE } = require('./constants');
+const { BLUE, DARK_ORANGE } = require('./constants');
 // const generalChannel = process.env.DISCORD_CHANNEL_ID_GENERAL;
 const client = new Discord.Client();
 let avatar = {};
@@ -73,12 +73,46 @@ client.on('messageDelete', async (message) => {
       },
       author: {
         name: `${executor.username}#${executor.discriminator}`,
-        icon_url: executor.avatarURL,
+        icon_url: executor.defaultAvatarURL,
       },
       fields: [],
     };
     modLogChannel.send({ embed });
   }
+});
+
+client.on('messageUpdate', (oldM, newM) => {
+  if (oldM.channel.name === 'live-streams'
+    || oldM.channel.name === 'eso-ep-activity'
+    || newM.content === '') {
+    return;
+  }
+  const modLogChannel = oldM.guild.channels.find('name', 'mod_log');
+  const author = oldM.author;
+  const embed = {
+    description: `**Message edited in ${oldM.channel}**`,
+    color: BLUE,
+    timestamp: new Date().toISOString(),
+    footer: {
+      text: `ID: ${author.id}`,
+    },
+    author: {
+      name: `${author.username}#${author.discriminator}`,
+      icon_url: author.defaultAvatarURL,
+    },
+    fields: [
+      {
+        name: 'Before',
+        value: oldM.content,
+      },
+      {
+        name: 'After',
+        value: newM.content,
+      },
+    ],
+  };
+  modLogChannel.send({ embed })
+    .catch(logError);
 });
 
 client.login(process.env.DISCORD_TOKEN)
