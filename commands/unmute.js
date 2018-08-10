@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const { unmute } = require('../tasks');
 const { mentionToUserId } = require('./utils');
+const { logError } = require('./../logger');
 
 function validate(message, user) {
   const muteRole = message.guild.roles.find('name', 'Muted').id;
@@ -30,7 +31,11 @@ module.exports = {
     if (!validate(message, userToUnmute)) {
       return;
     }
-    await unmute(userToUnmute, message.guild);
+    try {
+      await unmute(userToUnmute, message.guild);
+    } catch (e) {
+      logError(e);
+    }
 
     const embedReply = new Discord.RichEmbed({
       title: 'UNMUTED',
