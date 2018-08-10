@@ -9,6 +9,8 @@ before_script:
 
 test:
   stage: test
+  only:
+   - dev@eso-community/discord-node-js
   script:
    - npm start
 
