@@ -26,8 +26,8 @@ module.exports = {
   usage: '[number: 1 - 99]`',
   execute: async (message, args) => {
     if (!validate(message, args)) return;
-    const deletedMessages = Array.from(await message.channel.bulkDelete(parseInt(args[0], 10) + 1, true), ([k, v]) => v);
-    const messageWord = (parseInt(args[0], 10) === 1) ? 'message was' : 'messages were';
+    const deletedMessages = Array.from(await message.channel.bulkDelete(args[0] + 1, true), ([k, v]) => v);
+    const messageWord = (args[0] === 1) ? 'message was' : 'messages were';
     message.channel.send(`${args[0]} ${messageWord} deleted from here!`);
     const modLogChannel = message.guild.channels.find('name', 'mod_log');
     let messages = '';
