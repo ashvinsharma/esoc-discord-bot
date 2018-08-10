@@ -14,9 +14,10 @@ let avatar = {};
 client.on('ready', async () => {
   log('Discord bot started');
   client.user.setActivity('Type !help for a list of the commands.').catch(logError);
-  avatar = await Utils.fetchAvatarsFromDb();
   Utils.startGettingGames(client);
   Utils.startGettingStreams(client);
+  avatar = await Utils.fetchAvatarsFromDb()
+    .catch(logError);
   await Utils.ensureMutedRolesExists(client.guilds)
     .catch(logError);
   await Utils.unmuteUsers(client.guilds, mutedUsers)

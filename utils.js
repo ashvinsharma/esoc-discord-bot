@@ -48,47 +48,55 @@ class Utils {
     while (true) {
       const tempStreamMap = new Map();
       log('Twitch get/refresh streams..');
-      const response = await Twitch.getStream();
-      log('Found streams');
-      const streams = response.streams;
-      await Promise.all(streams.map(async (stream) => {
-        const user = await response.users[`user_${stream.user_id}`];
-        log('Create embed..');
-        const embed = await Twitch.createEmbed(response, stream, user);
-        log('Created embed successfully');
-        // Update the streams if changed
-        if (streamEmbeds.get(user.display_name) !== undefined) {
-          log(`Stream "${user.display_name}" updated. Edit discord message..`);
-          const m = await channel.fetchMessage(streamEmbeds.get(user.display_name));
-          tempStreamMap.set(user.display_name, m.id);
-          m.edit('', { embed });
-          log(`"${user.display_name}" stream updated successfully`);
-        }
-        // Adds the stream if not in the map
-        if (streamEmbeds.get(user.display_name) === undefined) {
-          log(`Adding stream "${user.display_name}" to channel..`);
-          const m = await channel.send({ embed });
-          log(`"${user.display_name}" stream added successfully`);
-          tempStreamMap.set(user.display_name, m.id);
-        }
-      }))
-        .catch(error => logError(`Failed to update the streams messages. Error: ${error}`));
-      // Deletes the streams if not found in the response
-      const deleteStreams = [];
-      streamEmbeds.forEach((val, key, map) => {
-        if (map !== undefined && tempStreamMap.get(key) === undefined) {
-          log(`Delete streams from discord that are not in the response from Twitch`);
-          channel.fetchMessage(val)
-            .then((message) => {
-              deleteStreams.push(message.delete());
-            })
-            .catch(error => logError('Failed to fetch message to be deleted'));
-        }
-      });
-      this.deleteRedundantMessages(deleteStreams);
-      streamEmbeds = tempStreamMap;
+      try {
+        const response = await Twitch.getStream();
+        log('Found streams');
+        const streams = response.streams;
+        await Promise.all(streams.map(async (stream) => {
+          const user = await response.users[`user_${stream.user_id}`];
+          log('Create embed..');
+          const embed = await Twitch.createEmbed(response, stream, user);
+          log('Created embed successfully');
+          // Update the streams if changed
+          if (streamEmbeds.get(user.display_name) !== undefined) {
+            log(`Stream "${user.display_name}" updated. Edit discord message..`);
+            const m = await channel.fetchMessage(streamEmbeds.get(user.display_name));
+            tempStreamMap.set(user.display_name, m.id);
+            m.edit('', { embed });
+            log(`"${user.display_name}" stream updated successfully`);
+          }
+          // Adds the stream if not in the map
+          if (streamEmbeds.get(user.display_name) === undefined) {
+            log(`Adding stream "${user.display_name}" to channel..`);
+            const m = await channel.send({ embed });
+            log(`"${user.display_name}" stream added successfully`);
+            tempStreamMap.set(user.display_name, m.id);
+          }
+        }))
+          .catch(error => logError(`Failed to update the streams messages. Error: ${error}`));
+        // Deletes the streams if not found in the response
+        const deleteStreams = [];
+        streamEmbeds.forEach((val, key, map) => {
+          if (map !== undefined && tempStreamMap.get(key) === undefined) {
+            log(`Delete streams from discord that are not in the response from Twitch`);
+            channel.fetchMessage(val)
+              .then((message) => {
+                deleteStreams.push(message.delete());
+              })
+              .catch(error => logError('Failed to fetch message to be deleted'));
+          }
+        });
+        this.deleteRedundantMessages(deleteStreams);
+        streamEmbeds = tempStreamMap;
+      } catch (e) {
+        logError(e);
+      }
       log(`${constants.UPDATE_TWITCH_INTERVAL / 1000} seconds until next stream update...`);
-      await sleep(constants.UPDATE_TWITCH_INTERVAL);
+      try {
+        await sleep(constants.UPDATE_TWITCH_INTERVAL);
+      } catch (e) {
+        logError(`Sleep Error: ${e}`);
+      }
     }
   }
 
@@ -106,7 +114,8 @@ class Utils {
 
   static async startGettingGames(client) {
     log('Start getting games...');
-    const maps = await Utils.getMaps();
+    const maps = await Utils.getMaps()
+      .catch(logError);
     let unknownMaps = Utils.getUnknownMaps();
     let gameEmbeds = new Map();
     const channel = client.channels.get(epChannel);
@@ -115,45 +124,53 @@ class Utils {
     while (true) {
       log('Get/refresh ESOC games...');
       const newGames = new Map();
-      const games = await ESO.getLobbies();
-      await Promise.all(games.map(async (game) => {
-        log(`Creating embed for game "${game.name}"`);
-        const embed = await ESO.createEmbed(game, maps, unknownMaps);
-        log('Successfully created an embed for ESOC game');
-        // Update
-        if ((gameEmbeds.get(game.id) !== undefined)) {
-          log(`Update discord message for game ${game.id}`);
-          const message = await channel.fetchMessage(gameEmbeds.get(game.id))
-            .catch(error => logError(`Failed to fetch message with game id ${game.id}. Error: ${error}`));
-          newGames.set(game.id, message.id);
-          message.edit('', { embed })
-            .catch(error => logError(`Failed to edit message with game id ${game.id}. Error: ${error}`));
-          log(`Game "${game.name}" was updated`);
-        }
-        // Add
-        if (gameEmbeds.get(game.id) === undefined) {
-          log(`Add discord message for new game with id ${game.id}`);
-          const message = await channel.send({ embed })
-            .catch(error => logError(`Failed to send message embed for game "${game.id}"`));
-          log(`Game "${game.name}" was created`);
-          newGames.set(game.id, message.id);
-        }
-      }))
-        .catch(error => logError(`Failed in Promise.all trying to create discord message embeds for all games. Error: ${error}`));
-      // Remove
-      const deleteGames = [];
-      log('Remove old messages with games that are no longer hosted');
-      gameEmbeds.forEach(async (val, key, map) => {
-        if (map !== undefined && newGames.get(key) === undefined) {
-          const message = await channel.fetchMessage(val)
-            .catch(error => logError(`Failed to fetch message with value ${val}. Error: ${error}`));
-          deleteGames.push(message.delete());
-        }
-      });
-      this.deleteRedundantMessages(deleteGames);
-      gameEmbeds = newGames;
+      try {
+        const games = await ESO.getLobbies();
+        await Promise.all(games.map(async (game) => {
+          log(`Creating embed for game "${game.name}"`);
+          const embed = await ESO.createEmbed(game, maps, unknownMaps);
+          log('Successfully created an embed for ESOC game');
+          // Update
+          if ((gameEmbeds.get(game.id) !== undefined)) {
+            log(`Update discord message for game ${game.id}`);
+            const message = await channel.fetchMessage(gameEmbeds.get(game.id))
+              .catch(error => logError(`Failed to fetch message with game id ${game.id}. Error: ${error}`));
+            newGames.set(game.id, message.id);
+            message.edit('', { embed })
+              .catch(error => logError(`Failed to edit message with game id ${game.id}. Error: ${error}`));
+            log(`Game "${game.name}" was updated`);
+          }
+          // Add
+          if (gameEmbeds.get(game.id) === undefined) {
+            log(`Add discord message for new game with id ${game.id}`);
+            const message = await channel.send({ embed })
+              .catch(error => logError(`Failed to send message embed for game "${game.id}"`));
+            log(`Game "${game.name}" was created`);
+            newGames.set(game.id, message.id);
+          }
+        }))
+          .catch(error => logError(`Failed in Promise.all trying to create discord message embeds for all games. Error: ${error}`));
+        // Remove
+        const deleteGames = [];
+        log('Remove old messages with games that are no longer hosted');
+        gameEmbeds.forEach(async (val, key, map) => {
+          if (map !== undefined && newGames.get(key) === undefined) {
+            const message = await channel.fetchMessage(val)
+              .catch(error => logError(`Failed to fetch message with value ${val}. Error: ${error}`));
+            deleteGames.push(message.delete());
+          }
+        });
+        this.deleteRedundantMessages(deleteGames);
+        gameEmbeds = newGames;
+      } catch (e) {
+        logError(e);
+      }
       log(`Wait for ${constants.UPDATE_INTERVAL_ESOC / 1000} seconds before updating game list again...`);
-      await sleep(constants.UPDATE_INTERVAL_ESOC);
+      try {
+        await sleep(constants.UPDATE_INTERVAL_ESOC);
+      } catch (e) {
+        logError(`Sleep Error: ${e}`);
+      }
     }
   }
 
@@ -190,7 +207,7 @@ class Utils {
       [avatar] = await con.execute(constants.AVATAR_QUERY);
       log('Successfully fetched avatars from database');
     } catch (error) {
-      logError(`Failed to fetch avatars from database. Error: ${error}`);
+      logError(`Failed to fetch avatars from database. ${error}`);
     }
     avatar = avatar.map(({ image_name, ...others }) => ({
       ...others,
@@ -201,13 +218,12 @@ class Utils {
 
   static async fetchMapsFromDb() {
     let maps = [];
-
     try {
       log('Fetching maps from database...');
       [maps] = await con.execute(constants.MAPS_QUERY);
       log('Successfully fetched maps from database');
     } catch (error) {
-      logError(`Failed to fetch maps from database. Error: ${error}`);
+      logError(`Failed to fetch maps from database. ${error}`);
     }
 
     // Turn map_name into mapName
@@ -216,13 +232,15 @@ class Utils {
 
   static async getMaps() {
     const maps = {};
-    const mapArray = [...constants.MAPS, ...await Utils.fetchMapsFromDb()];
-
+    try {
+      const mapArray = [...constants.MAPS, ...await Utils.fetchMapsFromDb()];
+    } catch (e) {
+      logError(e);
+    }
     // Turn array into object, mapname as keys
     mapArray.forEach(map => {
       maps[map.mapName] = map;
     });
-
     return maps;
   }
 
@@ -261,7 +279,6 @@ class Utils {
   static async ensureMutedRolesExists(guilds) {
     await Promise.all(Array.from(guilds, async ([guildId, guild]) => {
       const mutedRole = guild.roles.find('name', 'Muted');
-
       if (!mutedRole) {
         await Utils.createMutedRole(guild);
       }
@@ -313,10 +330,11 @@ class Utils {
     let commands = new Discord.Collection();
     const commandObject = require('./commands/');
 
-    Object.entries(commandObject).forEach(
-      ([key, value]) =>
-        commands.set(key, value)
-    );
+    Object.entries(commandObject)
+      .forEach(
+        ([key, value]) =>
+          commands.set(key, value)
+      );
 
     return commands;
 
