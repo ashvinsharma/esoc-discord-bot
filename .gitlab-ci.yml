@@ -16,4 +16,4 @@ deploy:
   stage: deploy
   script:
    - git remote add heroku https://git.heroku.com/esoc-bot.git
-   - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/esoc-bot.git HEAD:master
+   - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/esoc-bot.git HEAD:master -f
