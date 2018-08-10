@@ -15,7 +15,7 @@ test:
 deploy:
   stage: deploy
   only:
-   - dev
+   - dev@eso-community/discord-node-js
   script:
    - git remote add heroku https://git.heroku.com/esoc-bot.git
    - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/esoc-bot.git HEAD:master -f
