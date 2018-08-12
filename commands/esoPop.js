@@ -18,7 +18,7 @@ module.exports = {
     const numbers = [];
     const emojis = message.client.emojis;
     for (let i = 1; i < 6; i += 2) numbers.push(selector[i].children[0].data);
-    const description = `${emojis.find('name', 'AoE')} **Vanilla:** ${numbers[0]}\n
+    const description = `${emojis.find('name', 'AoE')} **Vanilla:** ${numbers[0]}
     ${emojis.find('name', 'TAD')} **TAD**: ${numbers[2]}`;
     const embed = {
       title: `${emojis.find('name', 'pop')} ESO Population Statistics`,

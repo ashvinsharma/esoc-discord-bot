@@ -10,7 +10,8 @@ class EsoActivity {
   static async getLobbies() {
     const url = `${constants.ESOC}${constants.ESOC_LOBBIES_URI}`;
     log(`Fetching ESOC patch lobbies from ${url}...`);
-    const req = await request(url).catch(error => logError(`Failed to fetch lobbies from ${url}. Error: ${error}`));
+    const req = await request(url)
+      .catch(error => logError(`Failed to fetch lobbies from ${url}. Error: ${error}`));
     try {
       log('Parse lobbies..');
       const lobbies = JSON.parse(req);
@@ -104,6 +105,8 @@ class EsoActivity {
       case 'randommaps':
         if (this.isPatch(patch)) return 'Team Maps';
         return 'All Maps';
+      case null:
+        return 'null';
       default:
         return map;
     }
