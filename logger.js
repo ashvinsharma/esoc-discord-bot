@@ -5,7 +5,7 @@ function log(string) {
 
 function logError(string) {
   const timestamp = new Date();
-  console.error(`[${timestamp}]:     ERROR: ${string}`);
+  console.trace(`[${timestamp}]:     ERROR: ${string}`);
 }
 
 module.exports = {
