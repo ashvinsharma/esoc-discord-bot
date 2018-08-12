@@ -313,10 +313,11 @@ class Utils {
     let commands = new Discord.Collection();
     const commandObject = require('./commands/');
 
-    Object.entries(commandObject).forEach(
-      ([key, value]) =>
-        commands.set(key, value)
-    );
+    Object.entries(commandObject)
+      .forEach(
+        ([key, value]) =>
+          commands.set(key, value)
+      );
 
     return commands;
 
