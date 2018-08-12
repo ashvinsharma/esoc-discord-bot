@@ -340,6 +340,10 @@ class Utils {
 
   }
 
+  static isOnlyDigits(input) {
+    const onlyDigitsRegexp = new RegExp(/^[0-9]+$/);
+    return onlyDigitsRegexp.test(input);
+  }
 }
 
 module.exports = Utils;

@@ -1,8 +1,10 @@
 const AVATAR_QUERY = 'SELECT hash, image_name FROM esoc.eso_avatar';
+const BLUE = 0x117EA6;
+const DARK_ORANGE = 0xFF470F;
 const DEFAULT_AVATAR = '0c182d86-f9e0-4208-8074-0ce427e40a84';
-const GOLD = 0xffa500;
+const GOLD = 0xffA500;
 const GOLD_COUNT = 25;
-const GRAY = 0x4f545c;
+const GRAY = 0x4F545C;
 const GREEN = 3842351; // decimal representation of hexa color
 const ESO_POP = 'http://agecommunity.com/_server_status_/';
 const ESO_QUERY = 'http://www.agecommunity.com/query/query.aspx?g=age3y&name=arg1&md=user';
@@ -64,6 +66,7 @@ const MAPS = [
 const MAPS_QUERY = 'SELECT a.alias_id, a.name AS map_name, m.*, p.username FROM esoc.maps_alias a '
   + 'INNER JOIN esoc.maps m ON m.ID = a.alias_id '
   + 'LEFT JOIN phpBB.p_users p ON p.user_id = m.Author';
+const ORANGE = 0xFFA500;
 const RED = 0xB22222;
 const SCENARIO_IMAGE = `${ESOC_IMAGES}/maps/scenario.png`;
 const TREATY_PATCH_ICON = `${ESOC_IMAGES}/patch-treaty-icon.png`;
@@ -88,6 +91,8 @@ const YELLOW = 15204220;
 
 module.exports = {
   AVATAR_QUERY,
+  BLUE,
+  DARK_ORANGE,
   DEFAULT_AVATAR,
   GOLD,
   GOLD_COUNT,
@@ -105,6 +110,7 @@ module.exports = {
   ESOC_SUPREMACY_STANDARD_LADDER,
   MAPS,
   MAPS_QUERY,
+  ORANGE,
   RED,
   SCENARIO_IMAGE,
   TREATY_PATCH_ICON,
