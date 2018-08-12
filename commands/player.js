@@ -63,12 +63,13 @@ module.exports = {
     const playerName = utf8.encode(args[0]);
     const queryURL = ESO_QUERY.replace('arg1', playerName);
     log(`Looking for player: '${playerName}' in ${queryURL}`);
-    let player = await request.get(queryURL);
+    let player = await request.get(queryURL)
+      .catch(logError);
     parseString(player, (err, result) => {
       player = result;
     });
     if (player.error !== undefined) {
-      logError(`Player: ${args[0]} is not found on ESO servers\n${player.error}`);
+      logError(`${player.error}. '${args[0]}' is not found on ESO servers.`);
       message.channel.send('Please enter a valid ESO Name');
       return;
     }
