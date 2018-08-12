@@ -8,12 +8,12 @@ function validate(message, args) {
   if (args.length !== 1) {
     const string = (args.length > 1) ? 'Just 1 argument is required!' : 'This command requires 1 argument';
     message.channel.send(`${string}\nTry: ${prefix}help ${name}`);
-    return false;
+    return [false];
   }
 
   if (!Utils.isOnlyDigits(args[0])) {
     message.channel.send('Argument should be a positive integer(max 99).');
-    return false;
+    return [false];
   }
 
   // Removing leading zeroes if any
@@ -25,14 +25,14 @@ function validate(message, args) {
   messagesNumber = Number(messagesNumber);
   if (!Number.isInteger(messagesNumber) || messagesNumber === 0 || messagesNumber > 99) {
     message.channel.send('Argument should be a positive integer(max 99).');
-    return false;
+    return [false];
   }
 
   if (!message.member.hasPermission('MANAGE_MESSAGES')) {
     message.channel.send(`Seems like you can't use this command! ${message.client.emojis.find('name', ':cry:')}`);
-    return false;
+    return [false];
   }
-  return true;
+  return [true, messagesNumber];
 }
 
 module.exports = {
@@ -41,10 +41,12 @@ module.exports = {
   usage: '[number: 1 - 99]',
 
   execute: async (message, args) => {
-    if (!validate(message, args)) return;
+    const resultValidate = validate(message, args);
+    if (!resultValidate[0]) return;
+    // eslint-disable-next-line
     const deletedMessages = Array.from(await message.channel.bulkDelete(parseInt(args[0], 10) + 1, true), ([k, v]) => v);
-    const messageWord = (parseInt(args[0], 10) === 1) ? 'message was' : 'messages were';
-    message.channel.send(`${Number(args[0])} ${messageWord} deleted from here!`);
+    const messageWord = (resultValidate[1] === 1) ? 'message was' : 'messages were';
+    message.channel.send(`${resultValidate[1]} ${messageWord} deleted from here!`);
     const modLogChannel = message.guild.channels.find('name', 'mod_log');
     let messages = '';
     deletedMessages.shift();
@@ -55,7 +57,7 @@ module.exports = {
     if (modLogChannel) {
       const author = message.author;
       const embed = {
-        description: `**${args[0]} ${messageWord} deleted by ${author} in ${message.channel}**\n`
+        description: `**${resultValidate[1]} ${messageWord} deleted by ${author} in ${message.channel}**\n`
         + `${messages}`,
         color: DARK_ORANGE,
         timestamp: new Date().toISOString(),
