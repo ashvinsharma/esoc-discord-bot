@@ -28,7 +28,7 @@ function validate(message, args) {
     return [false];
   }
 
-  if (message.member.hasPermission('MANAGE_MESSAGES')) {
+  if (!message.member.hasPermission('MANAGE_MESSAGES')) {
     message.channel.send('Seems like you can\'t use this command! 😢');
     return [false];
   }
