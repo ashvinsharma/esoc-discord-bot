@@ -29,7 +29,7 @@ function validate(message, args) {
   }
 
   if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-    message.channel.send(`Seems like you can't use this command! ${message.client.emojis.find('name', ':cry:')}`);
+    message.channel.send('Seems like you can\'t use this command! 😢');
     return [false];
   }
   return [true, messagesNumber];
