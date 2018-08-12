@@ -45,11 +45,11 @@ const MAPS = [
     DisplayName: 'KnB Maps',
     MiniMapUrl: `${ESOC_IMAGES}/maps/kb_maps.png`,
   },
-  {
-    mapName: 'ESOC Maps',
-    DisplayName: 'ESOC Maps',
-    MiniMapUrl: `${ESOC_IMAGES}/maps/esoc_maps.jpg`,
-  },
+  // {
+  //   mapName: 'ESOC Maps',
+  //   DisplayName: 'ESOC Maps',
+  //   MiniMapUrl: `${ESOC_IMAGES}/maps/esoc_maps.jpg`,
+  // },
   {
     mapName: 'Classic Maps',
     DisplayName: 'Classic Maps',
