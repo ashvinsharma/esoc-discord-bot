@@ -27,7 +27,8 @@ class Twitch {
     try {
       const url = `${constants.TWITCH_API_URI}${constants.TWITCH_API_USERS_URI}${userID.toString()}`;
       log(`Fetch user"${userID}" from ${url}`);
-      const res = await request.get(url, constants.TWITCH_OPTIONS);
+      const res = await request.get(url, constants.TWITCH_OPTIONS)
+        .catch(logError);
       log('Request successful, get data from response...');
       data = res.data[0]; // We are doing this
       data = JSON.stringify(data, ['id', 'login', 'display_name']); // to keep only
@@ -50,8 +51,12 @@ class Twitch {
     let userData = null;
     let cacheUsers = null;
     if (fs.existsSync('user.json')) {
-      cacheUsers = await this.getUserFromCache(userID);
-      userData = cacheUsers;
+      try {
+        cacheUsers = await this.getUserFromCache(userID);
+        userData = cacheUsers;
+      } catch (e) {
+        logError(e);
+      }
     } else {
       try {
         log('Could not find user.json with cached users, fetch from Twitch instead');
@@ -67,7 +72,15 @@ class Twitch {
   static async getStream() {
     const url = `${constants.TWITCH_API_URI}${constants.TWITCH_API_STREAMS_URI}`;
     log(`Fetch streams from "${url}"...`);
-    const res = await request(url, constants.TWITCH_OPTIONS);
+    let res;
+    try {
+      res = await request(url, constants.TWITCH_OPTIONS);
+    } catch (e) {
+      logError(`StatusCodeError ${e.error.status} Message: ${e.error.message}`);
+      return {
+        error: e.error.message,
+      };
+    }
     log('Fetched streams successfully');
     const streams = res.data;
     const users = {};

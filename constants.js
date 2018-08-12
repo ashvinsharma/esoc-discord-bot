@@ -8,7 +8,7 @@ const GRAY = 0x4F545C;
 const GREEN = 3842351; // decimal representation of hexa color
 const ESO_POP = 'http://agecommunity.com/_server_status_/';
 const ESO_QUERY = 'http://www.agecommunity.com/query/query.aspx?g=age3y&name=arg1&md=user';
-const ESOC = 'http://eso-community.net';
+const ESOC = 'https://eso-community.net';
 const ESOC_AVATARS = '/images/avatars/aoe3';
 const ESOC_IMAGES = '/images/aoe3';
 const ESOC_LOBBIES_URI = '/assets/patch/api/lobbies.json';

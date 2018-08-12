@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const { mute, unmute } = require('../tasks');
 const { mentionToUserId } = require('./utils');
+const { logError } = require('./../logger');
 
 function validate(message, userToMute, minutesMuted, reason) {
   if (!userToMute) {
@@ -50,11 +51,16 @@ module.exports = {
       return;
     }
 
-    await mute(userToMute, moderator, message.guild, minutesMuted, reason);
+    try {
+      await mute(userToMute, moderator, message.guild, minutesMuted, reason);
+    } catch (e) {
+      logError(e);
+    }
 
     setTimeout(async () => {
       await unmute(userToMute, message.guild);
-    }, minutesMuted * 1000 * 60);
+    }, minutesMuted * 1000 * 60)
+      .catch(logError);
 
     const embedReply = new Discord.RichEmbed({
       title: 'MUTED',

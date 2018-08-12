@@ -19,6 +19,8 @@ client.on('ready', async () => {
   avatar = await Utils.fetchAvatarsFromDb();
   Utils.startGettingGames(client);
   Utils.startGettingStreams(client);
+  avatar = await Utils.fetchAvatarsFromDb()
+    .catch(logError);
   await Utils.ensureMutedRolesExists(client.guilds)
     .catch(logError);
   await Utils.unmuteUsers(client.guilds, mutedUsers)

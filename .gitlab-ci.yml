@@ -10,14 +10,14 @@ before_script:
 test:
   stage: test
   only:
-   - dev@eso-community/discord-node-js
+   - dev
   script:
    - npm start
 
 deploy:
   stage: deploy
   only:
-   - dev@eso-community/discord-node-js
+   - dev
   script:
    - git remote add heroku https://git.heroku.com/esoc-bot.git
    - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/esoc-bot.git HEAD:master -f
