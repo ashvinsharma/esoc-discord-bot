@@ -233,14 +233,14 @@ class Utils {
   static async getMaps() {
     const maps = {};
     try {
-      const mapArray = [...constants.MAPS, ...await Utils.fetchMapsFromDb()];
+      let mapArray = [...constants.MAPS, ...await Utils.fetchMapsFromDb()];
+      // Turn array into object, mapname as keys
+      mapArray.forEach(map => {
+        maps[map.mapName] = map;
+      });
     } catch (e) {
       logError(e);
     }
-    // Turn array into object, mapname as keys
-    mapArray.forEach(map => {
-      maps[map.mapName] = map;
-    });
     return maps;
   }
 
