@@ -59,8 +59,7 @@ module.exports = {
 
     setTimeout(async () => {
       await unmute(userToMute, message.guild);
-    }, minutesMuted * 1000 * 60)
-      .catch(logError);
+    }, minutesMuted * 1000 * 60);
 
     const embedReply = new Discord.RichEmbed({
       title: 'MUTED',
