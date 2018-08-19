@@ -173,7 +173,7 @@ class EsoActivity {
     const authorIconUrl = await this.getPatchIcon(game.patch);
     return {
       title: escapeMarkdown(game.name),
-      url: this.getUserLink(game.players[0], game.patch),
+      url: game.quicksearch ? '' : this.getUserLink(game.players[0], game.patch),
       color: this.getEmbedColor(game.patch),
       // 'timestamp': date.toISOString(),
       // 'footer': {

@@ -144,7 +144,7 @@ class Utils {
           if (gameEmbeds.get(game.id) === undefined) {
             log(`Add discord message for new game with id ${game.id}`);
             const message = await channel.send({ embed })
-              .catch(error => logError(`Failed to send message embed for game "${game.id}"`));
+              .catch(error => logError(`Failed to send message embed for game "${game.id}". error: ${error}`));
             log(`Game "${game.name}" was created`);
             newGames.set(game.id, message.id);
           }
