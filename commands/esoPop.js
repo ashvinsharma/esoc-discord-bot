@@ -18,10 +18,10 @@ module.exports = {
     const numbers = [];
     const emojis = message.client.emojis;
     for (let i = 1; i < 6; i += 2) numbers.push(selector[i].children[0].data);
-    const description = `${emojis.find('name', 'AoE')} **Vanilla:** ${numbers[0]}
-    ${emojis.find('name', 'TAD')} **TAD**: ${numbers[2]}`;
+    const description = `${emojis.find('name', 'AoE')} **Vanilla:** ${numbers[0]} online\n`
+        + `${emojis.find('name', 'TAD')} **TAD**: ${numbers[2]} online`;
     const embed = {
-      title: `${emojis.find('name', 'pop')} ESO Population Statistics`,
+      title: `ESO Population Statistics`,
       description,
       url: ESO_POP,
       color: YELLOW,
