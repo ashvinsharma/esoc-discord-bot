@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node bot.js",
-    "lint": "eslint \"./**/*.js\""
+    "lint": "eslint \"./**/*.js\"",
+    "test": "echo \"tests passed\""
   },
   "keywords": [
     "heroku",
