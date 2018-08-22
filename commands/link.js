@@ -1,17 +1,9 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const { log, logError } = require('./../logger');
-const db = require('./../db');
+const { ESOC, ESOC_AUTH } = require('./../constants');
 
-const validate = async (args) => {
-  if (args.length !== 2) return [false, 'Only two arguments are required for this command'];
-
-  const [result, fields] = await db.query('SELECT p.user_password FROM phpBB.p_users as p '
-    + `WHERE p.username_clean LIKE '${args[0].toLowerCase()}'`);
-
-  const hash = await bcrypt.hash(args[1], 10);
-  const match = await bcrypt.compare(args[1], result[0].user_password);
-  if (!match) return [false, 'Your username and password don\'t match'];
+const validate = (args) => {
+  if (args.length !== 0) return [false, 'No argument is required for this command'];
   return [true];
 };
 
@@ -19,11 +11,18 @@ module.exports = {
   name: 'link',
   description: 'Links your discord with esoc',
   async execute(msg, args) {
-    const isValid = await validate(args);
+    const isValid = validate(args);
     if (isValid[0] === false) {
       msg.channel.send(isValid[1]);
+      return;
     }
-    msg.channel.send('YO!');
-    // generate token and create the link
+
+    const user = {
+      id: msg.author.id,
+      username: msg.author.username,
+      discriminator: msg.author.discriminator,
+    };
+    const token = jwt.sign({ user }, process.env.SECRET_JWT_KEY);
+    msg.channel.send(`Link your discord account with ESOC using this link:\n${ESOC}/${ESOC_AUTH}${token}`);
   },
 };
