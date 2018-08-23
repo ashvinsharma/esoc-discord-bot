@@ -9,10 +9,8 @@ before_script:
 
 test:
   stage: test
-  only:
-   - dev
   script:
-   - npm start
+   - npm test
 
 deploy:
   stage: deploy
