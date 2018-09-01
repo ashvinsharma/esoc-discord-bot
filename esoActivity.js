@@ -13,7 +13,7 @@ class EsoActivity {
     const options = {
       uri: url,
       headers: {
-        'User-Agent': 'ESOC-Bot Discord/1.4'
+        'User-Agent': 'ESOC-Bot Discord/1.4',
       },
     };
     const req = await request(options)
