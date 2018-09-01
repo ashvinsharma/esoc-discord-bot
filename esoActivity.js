@@ -10,7 +10,13 @@ class EsoActivity {
   static async getLobbies() {
     const url = `${constants.ESOC}${constants.ESOC_LOBBIES_URI}`;
     log(`Fetching ESOC patch lobbies from ${url}...`);
-    const req = await request(url)
+    const options = {
+      uri: url,
+      headers: {
+        'User-Agent': 'ESOC-Bot Discord/1.4',
+      },
+    };
+    const req = await request(options)
       .catch(error => logError(`Failed to fetch lobbies from ${url}. Error: ${error}`));
     try {
       log('Parse lobbies..');

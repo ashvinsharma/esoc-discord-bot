@@ -44,6 +44,10 @@ client.on('message', (message) => {
     logError(`Could not find command "${args[0].toLowerCase()}" to execute...`);
     return;
   }
+  if (!(message.channel.name === 'bot-commands' || message.channel.type === 'dm') && !(command.name === 'clean' || command.name === 'mute')) {
+    log('Commands can\'t be sent in that channel');
+    return;
+  }
   try {
     log(`Execute command "${message.content}"`);
     if (message.content.split(' ')[0].slice(1)
