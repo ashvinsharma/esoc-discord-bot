@@ -105,8 +105,7 @@ module.exports = {
     try {
       url = `${ESOC}${ESOC_AVATARS}/${avatar[avatarId].imageName}`;
     } catch (error) {
-      // url = `${ESOC}${ESOC_AVATARS}/${avatar[DEFAULT_AVATAR].imageName}`;
-      url = '';
+      url = `${ESOC}${ESOC_AVATARS}/${avatar[DEFAULT_AVATAR].imageName}`;
     }
     const joinDate = new Date(player.user[0].dateJoined);
     const embed = {
