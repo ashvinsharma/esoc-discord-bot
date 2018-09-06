@@ -2,7 +2,7 @@
 const sleep = require('await-sleep');
 const fs = require('fs');
 const path = require('path');
-const con = require('./db');
+// const con = require('./db');
 const ESO = require('./esoActivity');
 const Twitch = require('./twitch');
 const Discord = require('discord.js');
