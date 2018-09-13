@@ -46,7 +46,7 @@ module.exports = {
     // eslint-disable-next-line
     const deletedMessages = Array.from(await message.channel.bulkDelete(parseInt(args[0], 10) + 1, true), ([k, v]) => v);
     const messageWord = (resultValidate[1] === 1) ? 'message was' : 'messages were';
-    message.channel.send(`${resultValidate[1]} ${messageWord} deleted from here!`);
+    // message.channel.send(`${resultValidate[1]} ${messageWord} deleted from here!`);
     const modLogChannel = message.guild.channels.find('name', 'mod_log');
     let messages = '';
     deletedMessages.shift();
